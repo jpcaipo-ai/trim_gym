@@ -448,7 +448,193 @@ const html = `<!doctype html>
     .ok { color: #0b6b3a; background: #dff8e9; }
     .bad { color: #9a2f2f; background: #ffe4e4; }
     .yes { color: #0b4f7a; background: #e0f2ff; }
+    .dashboard-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      padding: 22px 28px 38px;
+      align-items: start;
+    }
+    .dashboard-main { min-width: 0; }
+    .client360 {
+      position: sticky;
+      top: 104px;
+      min-height: calc(100vh - 128px);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 250, 242, .94);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .client360-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .client360 h2 { font-size: 22px; }
+    .client-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+    .client-profile {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .client-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #111;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 12px 22px rgba(0,0,0,.18);
+    }
+    .client-name { font-size: 16px; font-weight: 900; }
+    .client-source { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .client-stat-list {
+      display: grid;
+      gap: 10px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .client-stat {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+    }
+    .client-stat b { color: var(--muted); }
+    .client-stat strong { text-align: right; }
+    .purchase-list {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .purchase-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .purchase-item b { display: block; font-size: 12px; }
+    .purchase-item span { display: block; color: var(--muted); margin-top: 3px; }
+    .sede-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .sede-card {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--green);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .sede-card:nth-child(2) { border-top-color: var(--amber); }
+    .sede-card:nth-child(3) { border-top-color: var(--red); }
+    .sede-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    .sede-card h3 {
+      margin: 0;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .sede-badge {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 850;
+      background: #dcf8e8;
+      color: #0b6b3a;
+    }
+    .sede-card:nth-child(2) .sede-badge { background: #fff2cf; color: #8a5800; }
+    .sede-card:nth-child(3) .sede-badge { background: #ffe4e4; color: #9a2f2f; }
+    .sede-main {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    .sede-main b,
+    .sede-foot b { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+    .sede-main strong { display: block; font-size: 18px; }
+    .sede-foot {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      font-size: 12px;
+    }
+    .explorer-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mini-button {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 7px;
+      height: 32px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #111;
+    }
+    .kpi {
+      padding: 16px 54px 14px 16px;
+      min-height: 110px;
+    }
+    .kpi::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      top: 28px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, #fff 0 36%, rgba(223,17,25,.14) 38% 100%);
+      border: 1px solid rgba(223,17,25,.18);
+    }
+    .kpi:nth-child(1)::after { content: "↗"; color: var(--red); display: grid; place-items: center; font-weight: 900; }
+    .kpi:nth-child(2)::after { content: "◎"; color: var(--red); display: grid; place-items: center; font-weight: 900; }
+    .kpi:nth-child(3)::after { content: "∑"; color: var(--red); display: grid; place-items: center; font-weight: 900; }
+    .kpi:nth-child(4)::after { content: "●"; color: var(--red); display: grid; place-items: center; font-weight: 900; }
+    .kpi strong { font-size: 31px; }
+    .panel {
+      border-radius: 10px;
+    }
+    .brand-summary { display: none; }
+    main { padding: 0; }
     @media (max-width: 1160px) {
+      .dashboard-shell { grid-template-columns: 1fr; }
+      .client360 { position: static; min-height: auto; }
+      .sede-cards { grid-template-columns: 1fr; }
       .brand-summary { grid-template-columns: 1fr 1fr; }
       .filters { grid-template-columns: repeat(3, minmax(150px, 1fr)); }
       .hero, .charts { grid-template-columns: 1fr; }
@@ -487,7 +673,8 @@ const html = `<!doctype html>
         <div><label>Buscar cliente</label><input id="buscar" placeholder="Nombre, DNI o celular"></div>
       </div>
   </header>
-  <main>
+  <main class="dashboard-shell">
+    <div class="dashboard-main">
     <section class="brand-summary">
       <div class="brand-statement">
         <b>Trim Gym Boutique x Llama Leads</b>
@@ -552,13 +739,14 @@ const html = `<!doctype html>
         <div class="chart-box"><canvas id="introConversionChart"></canvas></div>
       </div>
     </section>
+    <section class="sede-cards" id="sedeCards"></section>
     <section class="tables">
       <div class="panel table-panel">
         <div class="table-head"><h2>Progreso mensual</h2><span class="hint" id="monthCount"></span></div>
         <div class="table-scroll"><table id="monthTable"></table></div>
       </div>
       <div class="panel table-panel">
-        <div class="table-head"><h2>Ranking ventas atribuidas</h2><span class="hint" id="attribRankCount"></span></div>
+        <div class="table-head"><h2>Explorador de clientes</h2><div class="explorer-tools"><span class="hint" id="attribRankCount"></span><button class="mini-button" id="exportClients" type="button">Exportar CSV</button></div></div>
         <div class="table-scroll"><table id="attribRankTable"></table></div>
       </div>
       <div class="panel table-panel">
@@ -570,6 +758,8 @@ const html = `<!doctype html>
         <div class="table-scroll"><table id="salesTable"></table></div>
       </div>
     </section>
+    </div>
+    <aside class="client360" id="client360"></aside>
   </main>
   <script>
     const DATA = ${escJson(controlData)};
@@ -1796,6 +1986,62 @@ const html = `<!doctype html>
     function selectedLeadPipelineLabel() {
       return els.sede.value === 'Todos' ? 'Todas las sedes' : els.sede.value;
     }
+    function generatedForSede(sede) {
+      return filteredGenerated().filter(r => r.Sede === sede);
+    }
+    function renderSedeCards(rows) {
+      const sedes = ['Trim 1 - Mendiburu', 'Trim 2 - Balboa', 'Trim 3 - Benavides'].filter(s => els.sede.value === 'Todos' || els.sede.value === s);
+      const impactRows = acquisitionMonthlyTotals(false);
+      document.querySelector('#sedeCards').innerHTML = sedes.map((sede, index) => {
+        const sedeRows = rows.filter(r => r.Sede === sede);
+        const sale = sedeRows.reduce((a, r) => a + Number(r.Pago || 0), 0);
+        const impact = impactRows.filter(r => r.sede === sede).reduce((a, r) => a + Number(r.value || 0), 0);
+        const generated = generatedForSede(sede);
+        const repurchase = generated.length ? generated.filter(r => Number(r['Compras posteriores'] || 0) > 0).length / generated.length : 0;
+        const ticket = generated.length ? generated.reduce((a, r) => a + Number(r['Total pagado'] || 0), 0) / generated.length : 0;
+        const short = sede.replace('Trim 1 - ', '').replace('Trim 2 - ', '').replace('Trim 3 - ', '').toUpperCase();
+        const labels = ['Fuerte crecimiento', 'Estable', 'Oportunidad'];
+        return '<article class="sede-card">' +
+          '<div class="sede-card-head"><h3>' + short + '</h3><span class="sede-badge">' + labels[index] + '</span></div>' +
+          '<div class="sede-main">' +
+            '<div><b>Venta filtro</b><strong>' + money(sale) + '</strong></div>' +
+            '<div><b>Impacto Llama</b><strong>' + money(impact) + '</strong></div>' +
+            '<div><b>% de venta</b><strong>' + pct(sale ? impact / sale : 0) + '</strong></div>' +
+          '</div>' +
+          '<div class="sede-foot">' +
+            '<div><b>Clientes generados</b><strong>' + generated.length + '</strong></div>' +
+            '<div><b>Recompra</b><strong>' + pct(repurchase) + '</strong></div>' +
+            '<div><b>Ticket prom.</b><strong>' + money(ticket) + '</strong></div>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+    }
+    function renderClient360() {
+      const clients = filteredGenerated().sort((a, b) => Number(b['Total pagado'] || 0) - Number(a['Total pagado'] || 0));
+      const c = clients[0];
+      if (!c) {
+        document.querySelector('#client360').innerHTML = '<div class="client360-head"><h2>Cliente 360</h2><span class="client-close">×</span></div><p class="hint">Sin clientes generados para este filtro.</p>';
+        return;
+      }
+      const purchases = (METRICS.Compras || []).filter(r => r.Sede === c.Sede && norm(r['Cliente captura']) === norm(c['Cliente captura']))
+        .sort((a, b) => String(b.Inscripcion || '').localeCompare(String(a.Inscripcion || '')))
+        .slice(0, 5);
+      const initials = String(c['Cliente captura'] || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
+      const status = c['Estado a 30/06/2026'] || 's/d';
+      document.querySelector('#client360').innerHTML =
+        '<div class="client360-head"><h2>Cliente 360</h2><span class="client-close">×</span></div>' +
+        '<div class="client-profile"><div class="client-avatar">' + escapeHtml(initials) + '</div><div><div class="client-name">' + escapeHtml(c['Cliente captura']) + '</div><div class="client-source">' + escapeHtml(c.Sede) + ' · Llama Leads</div></div></div>' +
+        '<div class="client-stat-list">' +
+          '<div class="client-stat"><b>LTV total</b><strong>' + money(c['Total pagado']) + '</strong></div>' +
+          '<div class="client-stat"><b>Compras</b><strong>' + (c['Compras total'] || 0) + '</strong></div>' +
+          '<div class="client-stat"><b>Primera compra</b><strong>' + escapeHtml(c['Primera compra'] || '-') + '</strong></div>' +
+          '<div class="client-stat"><b>Última compra</b><strong>' + escapeHtml(c['Ultima compra'] || '-') + '</strong></div>' +
+          '<div class="client-stat"><b>Estado actual</b><strong>' + escapeHtml(status) + '</strong></div>' +
+        '</div>' +
+        '<div class="purchase-list"><h2>Historial de compras</h2>' +
+          purchases.map(p => '<div class="purchase-item"><div><b>' + escapeHtml(p['Tipo plan'] || '-') + '</b><span>' + escapeHtml(p.Inscripcion || '-') + ' · ' + escapeHtml(p['Tipo servicio'] || '-') + '</span></div><strong>' + money(p.Pago) + '</strong></div>').join('') +
+        '</div>';
+    }
     function renderCharts(rows) {
       const months = group(rows, r => r.Mes, (r, key) => ({ key, sale: 0, attrib: 0 }), (s, r) => {
         s.sale += Number(r.Pago || 0);
@@ -1865,9 +2111,22 @@ const html = `<!doctype html>
       const rows = filteredRows();
       renderKpis(rows);
       renderCharts(rows);
+      renderSedeCards(rows);
+      renderClient360();
       renderTables(rows);
     }
     Object.values(els).forEach(el => el.addEventListener('input', update));
+    document.querySelector('#exportClients')?.addEventListener('click', () => {
+      const table = document.querySelector('#attribRankTable');
+      const lines = [...table.querySelectorAll('tr')].map(tr => [...tr.children].map(td => '"' + String(td.textContent || '').replace(/"/g, '""') + '"').join(','));
+      const blob = new Blob([lines.join('\\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'clientes_atribuidos_trim_gym.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
     window.addEventListener('resize', update);
     update();
   </script>
