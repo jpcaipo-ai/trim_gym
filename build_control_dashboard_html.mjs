@@ -394,6 +394,7 @@ const html = `<!doctype html>
       margin-bottom: 14px;
     }
     .chart-box { height: 330px; }
+    .wide > .chart-box:not(.pipeline-box) { height: 390px; }
     .chart-box.pipeline-box { height: 720px; }
     canvas { width: 100%; height: 100%; display: block; }
     .wide { grid-column: 1 / -1; }
@@ -526,8 +527,8 @@ const html = `<!doctype html>
         <div class="panel-title"><h2>Impacto real Llama Leads mes a mes</h2><span class="hint">monto generado por clientes de la agencia</span></div>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
       </div>
-      <div class="panel">
-        <div class="panel-title"><h2>Venta total mensual</h2><span class="hint">linea de tendencia con monto visible</span></div>
+      <div class="panel wide">
+        <div class="panel-title"><h2>Facturación total mes a mes</h2><span class="hint">nuevos, renovaciones, reinscripciones y matrículas</span></div>
         <div class="chart-box"><canvas id="salesChart"></canvas></div>
       </div>
       <div class="panel">
@@ -1293,7 +1294,7 @@ const html = `<!doctype html>
       const ltvAcumulado = p.total;
       const isSoloLlama = els.llama.value === 'Solo Llama Leads';
       const isAcquisitionView = els.matricula.value === 'Solo nuevos + matrículas';
-      const primaryLabel = isAcquisitionView ? 'Nuevos + matrículas' : isSoloLlama ? 'LTV acumulado atribuido' : 'Venta total';
+      const primaryLabel = isAcquisitionView ? 'Nuevos + matrículas' : isSoloLlama ? 'Venta acumulada real' : 'Venta total';
       const primaryValue = isAcquisitionView ? acq : isSoloLlama ? ltvAcumulado : m.total;
       const primaryDetail = isAcquisitionView ? 'cara inicial de adquisición' : isSoloLlama ? p.generated.toLocaleString('es-PE') + ' clientes generados' : m.tx.toLocaleString('es-PE') + ' transacciones';
       const primaryPrev = isAcquisitionView || isSoloLlama ? attributedForPeriod(shiftMonth(periodKey(), -1)) : null;
@@ -1420,6 +1421,88 @@ const html = `<!doctype html>
         ctx.fillText(opts.money ? money(v) : v, x, Math.max(13, y - 10));
         ctx.save(); ctx.translate(x, h - 14); ctx.rotate(-Math.PI / 4);
         ctx.fillStyle = '#667085'; ctx.textAlign = 'right'; ctx.fillText(labels[i], 0, 0); ctx.restore();
+      });
+    }
+    function totalBillingStackedChart(id, rows) {
+      const monthly = group(rows, r => r.Mes, (r, key) => ({
+        key,
+        nuevos: 0,
+        renovaciones: 0,
+        reinscripciones: 0,
+        matriculas: 0,
+        otros: 0
+      }), (s, r) => {
+        const amount = Number(r.Pago || 0);
+        const plan = norm(r['Tipo plan']);
+        const service = norm(r['Tipo servicio']);
+        if (service.includes('matr')) s.matriculas += amount;
+        else if (plan === 'nuevo') s.nuevos += amount;
+        else if (plan.includes('renov')) s.renovaciones += amount;
+        else if (plan.includes('reins')) s.reinscripciones += amount;
+        else s.otros += amount;
+      }).sort((a, b) => a.key.localeCompare(b.key));
+      const labels = monthly.map(r => r.key);
+      const totals = monthly.map(r => r.nuevos + r.renovaciones + r.reinscripciones + r.matriculas + r.otros);
+      const series = [
+        { key: 'nuevos', label: 'Nuevos', color: '#1f8a4c' },
+        { key: 'renovaciones', label: 'Renovaciones', color: '#111111' },
+        { key: 'reinscripciones', label: 'Reinscripciones', color: '#987447' },
+        { key: 'matriculas', label: 'Matrículas', color: '#df1119' },
+        { key: 'otros', label: 'Otros', color: '#526173' }
+      ];
+      const { ctx, w, h } = canvasCtx(id);
+      ctx.clearRect(0, 0, w, h);
+      const pad = { l: 64, r: 28, t: 46, b: 66 };
+      const max = Math.max(...totals, 1);
+      ctx.strokeStyle = '#d7dee9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t);
+      ctx.lineTo(pad.l, h - pad.b);
+      ctx.lineTo(w - pad.r, h - pad.b);
+      ctx.stroke();
+      const slot = (w - pad.l - pad.r) / Math.max(labels.length, 1);
+      const bw = Math.max(18, Math.min(58, slot * .55));
+      monthly.forEach((row, i) => {
+        const x = pad.l + i * slot + (slot - bw) / 2;
+        let y = h - pad.b;
+        series.forEach(s => {
+          const value = Number(row[s.key] || 0);
+          const bh = (h - pad.t - pad.b) * value / max;
+          if (bh > 0) {
+            y -= bh;
+            ctx.fillStyle = s.color;
+            ctx.fillRect(x, y, bw, bh);
+            if (bh > 22) {
+              ctx.fillStyle = '#fff';
+              ctx.font = '10px Segoe UI, Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText(money(value), x + bw / 2, y + bh / 2 + 4);
+            }
+          }
+        });
+        ctx.fillStyle = '#172033';
+        ctx.font = '11px Segoe UI, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(money(totals[i]), x + bw / 2, Math.max(14, y - 8));
+        ctx.save();
+        ctx.translate(x + bw / 2, h - 16);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillStyle = '#667085';
+        ctx.textAlign = 'right';
+        ctx.fillText(labels[i], 0, 0);
+        ctx.restore();
+      });
+      let legendX = pad.l;
+      series.forEach((s, i) => {
+        const x = legendX;
+        ctx.fillStyle = s.color;
+        ctx.fillRect(x, 14, 11, 11);
+        ctx.fillStyle = '#334155';
+        ctx.font = '11px Segoe UI, Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(s.label, x + 16, 24);
+        legendX += Math.max(86, ctx.measureText(s.label).width + 38);
       });
     }
     function attributedComboChart(id, rows) {
@@ -1719,7 +1802,7 @@ const html = `<!doctype html>
         if (r['Atribuido agencia'] === 'Si') s.attrib += Number(r.Pago || 0);
       }).sort((a, b) => a.key.localeCompare(b.key));
       attributedComboChart('#attribChart', rows);
-      lineChart('#salesChart', months.map(r => r.key), months.map(r => r.sale), { money: true });
+      totalBillingStackedChart('#salesChart', rows);
       const source = group(rows, r => r.Origen || 'Sin origen', (r, key) => ({ key, sale: 0 }), (s, r) => { s.sale += Number(r.Pago || 0); }).sort((a, b) => b.sale - a.sale).slice(0, 8);
       barChart('#sourceChart', source.map(r => r.key), source.map(r => r.sale), { money: true, horizontal: true });
       const pipelineLabel = selectedLeadPipelineLabel();
