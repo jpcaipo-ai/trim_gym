@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pipeline Llama Leads vs Mayo 15na</title>
+  <style>
+    :root {
+      --ink: #20242c;
+      --muted: #5c6370;
+      --line: #e7e9ee;
+      --red-1: #e60000;
+      --red-2: #ef6f68;
+      --red-3: #f4a397;
+      --yellow: #ffd323;
+      --bg: #f6f7f9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    main {
+      width: min(1240px, calc(100vw - 40px));
+      margin: 16px auto;
+      display: grid;
+      gap: 12px;
+    }
+
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .head-actions {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .trim-filter,
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #344052;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .trim-filter {
+      padding: 9px 34px 9px 13px;
+      color: #20242c;
+      font-weight: 800;
+      outline: none;
+      min-width: 150px;
+    }
+
+    .badge { padding: 9px 13px; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 18px rgba(31, 41, 55, .05);
+    }
+
+    .summary-card b {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 20px;
+    }
+
+    .summary-card span {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, .07);
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .funnel-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .panel-title span {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: right;
+    }
+
+    .funnel {
+      flex: 1;
+      min-height: 680px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 0 4px;
+    }
+
+    .step {
+      position: relative;
+      width: var(--w);
+      min-height: var(--h);
+      margin-inline: auto;
+      clip-path: polygon(0 0, 100% 0, calc(100% - var(--cut)) 100%, var(--cut) 100%);
+      background: var(--c);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 10px 22px;
+      box-shadow: 0 10px 20px rgba(31, 41, 55, .14);
+    }
+
+    .stage-1 { --w: 100%; --h: 120px; --cut: 6%; --c: var(--red-1); }
+    .stage-2 { --w: 82%; --h: 112px; --cut: 8%; --c: var(--red-2); }
+    .stage-3 { --w: 64%; --h: 106px; --cut: 11%; --c: var(--red-3); color: #3b1f1c; }
+    .stage-4 { --w: 48%; --h: 98px; --cut: 15%; --c: var(--yellow); color: #2b2600; }
+
+    .step-label {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .step-value {
+      margin-top: 4px;
+      font-size: 31px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .step-sub {
+      margin-top: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      opacity: .92;
+    }
+
+    .conversion {
+      display: grid;
+      justify-items: center;
+      align-self: center;
+      width: 100%;
+      gap: 2px;
+      color: #4a4f58;
+      font-size: 12px;
+      font-weight: 800;
+      min-height: 28px;
+      margin: -4px 0;
+    }
+
+    .conversion:before {
+      content: "";
+      width: 1px;
+      height: 10px;
+      background: #d7dce5;
+      display: block;
+    }
+
+    .variation-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 78px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: #e8f6ee;
+      color: #137645;
+      box-shadow: inset 0 0 0 1px rgba(19, 118, 69, .16);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .variation-chip:before {
+      content: "+";
+      font-size: 10px;
+      margin-right: 5px;
+      line-height: 1;
+    }
+
+    .variation-chip.down {
+      background: #fff0f0;
+      color: #bd1f1f;
+      box-shadow: inset 0 0 0 1px rgba(189, 31, 31, .16);
+    }
+
+    .variation-chip.down:before { content: "-"; }
+
+    .conversion-rate {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .side {
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fbfcfe;
+    }
+
+    .metric-card h3 {
+      margin: 0 0 6px;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .trim-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 5px 0;
+      font-size: 12px;
+      border-top: 1px solid #edf0f4;
+    }
+
+    .trim-line:first-of-type { border-top: 0; }
+    .rate-main {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .rate-main em {
+      color: #d93636;
+      font-style: normal;
+      font-weight: 900;
+    }
+    .rate-note {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .delta {
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 800;
+      background: #eef2f7;
+      color: #344052;
+      white-space: nowrap;
+    }
+
+    .delta.up { background: #e8f6ee; color: #137645; }
+    .delta.down { background: #fff0f0; color: #bd1f1f; }
+
+    @media (max-width: 980px) {
+      .grid, .summary { grid-template-columns: 1fr; }
+      .stage-3 { --w: 72%; }
+      .stage-4 { --w: 56%; }
+      .page-head { align-items: start; flex-direction: column; }
+      .head-actions { justify-content: start; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="page-head">
+      <div>
+        <h1>Pipeline Llama Leads</h1>
+        <div class="sub">Actual acumulado vs benchmark Mayo 15na</div>
+      </div>
+      <div class="head-actions">
+        <select class="trim-filter" id="trimFilter" aria-label="Filtrar por trim">
+          <option value="total">Trim Total</option>
+          <option value="trim1">Trim 1</option>
+          <option value="trim2">Trim 2</option>
+          <option value="trim3">Trim 3</option>
+        </select>
+        <div class="badge">Actual: junio al 16/06/2026 · Benchmark: mayo 15na</div>
+      </div>
+    </div>
+
+    <section class="summary">
+      <div class="summary-card"><b>Nuevos leads</b><strong id="kpiLeads">254</strong><span id="kpiLeadsVs">vs 344 en mayo 15na · -26.2%</span></div>
+      <div class="summary-card"><b>Citas agendadas</b><strong id="kpiSet">56</strong><span id="kpiSetVs">vs 59 · -5.1%</span></div>
+      <div class="summary-card"><b>Citas asistidas</b><strong id="kpiShow">46</strong><span id="kpiShowVs">vs 27 · +70.4%</span></div>
+      <div class="summary-card"><b>Cierres</b><strong id="kpiClose">17</strong><span id="kpiCloseVs">vs 5 · +240.0%</span></div>
+    </section>
+
+    <section class="grid">
+      <div class="panel funnel-panel">
+        <div class="panel-title">
+          <h2 id="funnelTitle">Embudo actual - Trim Total</h2>
+          <span id="funnelSubtitle">conversion vs mayo 15na</span>
+        </div>
+        <div class="funnel">
+          <div class="step stage-1">
+            <div>
+              <div class="step-label">Nuevos leads</div>
+              <div class="step-value" id="leadsValue">254</div>
+              <div class="step-sub" id="leadsSub">Trim 1: 72 · Trim 2: 93 · Trim 3: 89</div>
+            </div>
+          </div>
+          <div class="conversion">
+            <span class="variation-chip" id="setChip">4.8%</span>
+            <span class="conversion-rate" id="setRateLabel">22.0% conversion leads a citas</span>
+          </div>
+          <div class="step stage-2">
+            <div>
+              <div class="step-label">Citas agendadas</div>
+              <div class="step-value" id="setValue">56</div>
+              <div class="step-sub" id="setSub">Trim 1: 19 · Trim 2: 19 · Trim 3: 18</div>
+            </div>
+          </div>
+          <div class="conversion">
+            <span class="variation-chip" id="showChip">36.3%</span>
+            <span class="conversion-rate" id="showRateLabel">82.1% conversion citas a asistidas</span>
+          </div>
+          <div class="step stage-3">
+            <div>
+              <div class="step-label">Citas asistidas</div>
+              <div class="step-value" id="showValue">46</div>
+              <div class="step-sub" id="showSub">Trim 1: 14 · Trim 2: 18 · Trim 3: 14</div>
+            </div>
+          </div>
+          <div class="conversion">
+            <span class="variation-chip" id="closeChip">18.5%</span>
+            <span class="conversion-rate" id="closeRateLabel">37.0% conversion asistidas a cierres</span>
+          </div>
+          <div class="step stage-4">
+            <div>
+              <div class="step-label">Cierres</div>
+              <div class="step-value" id="closeValue">17</div>
+              <div class="step-sub" id="closeSub">Trim 1: 3 · Trim 2: 7 · Trim 3: 7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="panel">
+          <div class="panel-title"><h2 id="leadTitle">Distribucion de leads</h2><span>actual vs mayo 15na</span></div>
+          <div class="metric-card">
+            <h3>Nuevos leads</h3>
+            <div id="leadRows"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h2>SET RATE</h2><span>leads &rarr; citas agendadas</span></div>
+          <div class="metric-card">
+            <h3 id="setRowsTitle">Actual por sede</h3>
+            <div id="setRows"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h2>SHOW RATE</h2><span>agendadas &rarr; asistidas</span></div>
+          <div class="metric-card">
+            <h3 id="showRowsTitle">Actual por sede</h3>
+            <div id="showRows"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h2>CLOSE RATE</h2><span>asistidas &rarr; cierres</span></div>
+          <div class="metric-card">
+            <h3 id="closeRowsTitle">Actual por sede</h3>
+            <div id="closeRows"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const trimData = {
+      trim1: { label: "Trim 1", now: { leads: 72, set: 19, show: 14, close: 3 }, may: { leads: 94, set: 31, show: 11, close: 1 } },
+      trim2: { label: "Trim 2", now: { leads: 93, set: 19, show: 18, close: 7 }, may: { leads: 105, set: 12, show: 6, close: 0 } },
+      trim3: { label: "Trim 3", now: { leads: 89, set: 18, show: 14, close: 7 }, may: { leads: 145, set: 16, show: 10, close: 4 } }
+    };
+
+    const ids = ["trim1", "trim2", "trim3"];
+    const total = ids.reduce((acc, id) => {
+      const row = trimData[id];
+      for (const key of ["leads", "set", "show", "close"]) {
+        acc.now[key] += row.now[key];
+        acc.may[key] += row.may[key];
+      }
+      return acc;
+    }, { label: "Trim Total", now: { leads: 0, set: 0, show: 0, close: 0 }, may: { leads: 0, set: 0, show: 0, close: 0 } });
+    trimData.total = total;
+
+    const $ = (id) => document.getElementById(id);
+    const pct = (value, base) => base ? (value / base) * 100 : 0;
+    const signedPct = (value) => `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
+    const signedPp = (value) => `${value >= 0 ? "" : ""}${Math.abs(value).toFixed(1)}%`;
+    const cls = (value) => value < 0 ? "down" : "up";
+
+    function deltaCount(now, may) {
+      return may ? ((now - may) / may) * 100 : now ? 100 : 0;
+    }
+
+    function rates(row) {
+      return {
+        set: pct(row.set, row.leads),
+        show: pct(row.show, row.set),
+        close: pct(row.close, row.show)
+      };
+    }
+
+    function trimSummary(key, metric) {
+      if (key === "total") {
+        return ids.map(id => `${trimData[id].label}: ${trimData[id].now[metric]}`).join(" · ");
+      }
+      return `${trimData[key].label} · mayo 15na: ${trimData[key].may[metric]}`;
+    }
+
+    function rowHtml(value, label, rateText, delta, suffix = "", note = "") {
+      const sign = delta >= 0 ? "+" : "";
+      return `
+        <div class="trim-line">
+          <div>
+            <span class="rate-main">${value} - ${label}${rateText ? ` <em>(${rateText})</em>` : ""}</span>
+            ${note ? `<span class="rate-note">${note}</span>` : ""}
+          </div>
+          <span class="delta ${cls(delta)}">${sign}${delta.toFixed(1)}${suffix}</span>
+        </div>`;
+    }
+
+    function renderRows(key, type) {
+      const selected = key === "total" ? ids : [key];
+      return selected.map(id => {
+        const item = trimData[id];
+        const nowRates = rates(item.now);
+        const mayRates = rates(item.may);
+        if (type === "leads") {
+          return rowHtml(item.now.leads, item.label, "", deltaCount(item.now.leads, item.may.leads), "%", `antes ${item.may.leads}`);
+        }
+        if (type === "set") {
+          const delta = nowRates.set - mayRates.set;
+          return rowHtml(item.now.set, item.label, `${nowRates.set.toFixed(1)}%`, delta, " pp", `mayo: ${item.may.set} (${mayRates.set.toFixed(1)}%)`);
+        }
+        if (type === "show") {
+          const delta = nowRates.show - mayRates.show;
+          return rowHtml(item.now.show, item.label, `${nowRates.show.toFixed(1)}%`, delta, " pp", `mayo: ${item.may.show} (${mayRates.show.toFixed(1)}%)`);
+        }
+        const delta = nowRates.close - mayRates.close;
+        return rowHtml(item.now.close, item.label, `${nowRates.close.toFixed(1)}%`, delta, " pp", `mayo: ${item.may.close} (${mayRates.close.toFixed(1)}%)`);
+      }).join("");
+    }
+
+    function setChip(id, delta) {
+      const el = $(id);
+      el.textContent = signedPp(delta);
+      el.classList.toggle("down", delta < 0);
+    }
+
+    function render(key) {
+      const row = trimData[key];
+      const now = row.now;
+      const may = row.may;
+      const nowRates = rates(now);
+      const mayRates = rates(may);
+      const label = row.label;
+
+      $("funnelTitle").textContent = `Embudo actual - ${label}`;
+      $("funnelSubtitle").textContent = key === "total" ? "Trim Total" : label;
+
+      $("kpiLeads").textContent = now.leads;
+      $("kpiSet").textContent = now.set;
+      $("kpiShow").textContent = now.show;
+      $("kpiClose").textContent = now.close;
+      $("kpiLeadsVs").textContent = `vs ${may.leads} en mayo 15na · ${signedPct(deltaCount(now.leads, may.leads))}`;
+      $("kpiSetVs").textContent = `vs ${may.set} · ${signedPct(deltaCount(now.set, may.set))}`;
+      $("kpiShowVs").textContent = `vs ${may.show} · ${signedPct(deltaCount(now.show, may.show))}`;
+      $("kpiCloseVs").textContent = `vs ${may.close} · ${signedPct(deltaCount(now.close, may.close))}`;
+
+      $("leadsValue").textContent = now.leads;
+      $("setValue").textContent = now.set;
+      $("showValue").textContent = now.show;
+      $("closeValue").textContent = now.close;
+      $("leadsSub").textContent = trimSummary(key, "leads");
+      $("setSub").textContent = trimSummary(key, "set");
+      $("showSub").textContent = trimSummary(key, "show");
+      $("closeSub").textContent = trimSummary(key, "close");
+
+      setChip("setChip", nowRates.set - mayRates.set);
+      setChip("showChip", nowRates.show - mayRates.show);
+      setChip("closeChip", nowRates.close - mayRates.close);
+      $("setRateLabel").textContent = `${nowRates.set.toFixed(1)}% conversion leads a citas`;
+      $("showRateLabel").textContent = `${nowRates.show.toFixed(1)}% conversion citas a asistidas`;
+      $("closeRateLabel").textContent = `${nowRates.close.toFixed(1)}% conversion asistidas a cierres`;
+
+      const rowsTitle = key === "total" ? "Actual por sede" : label;
+      $("leadTitle").textContent = key === "total" ? "Distribucion de leads" : `Distribucion de leads - ${label}`;
+      $("setRowsTitle").textContent = rowsTitle;
+      $("showRowsTitle").textContent = rowsTitle;
+      $("closeRowsTitle").textContent = rowsTitle;
+      $("leadRows").innerHTML = renderRows(key, "leads");
+      $("setRows").innerHTML = renderRows(key, "set");
+      $("showRows").innerHTML = renderRows(key, "show");
+      $("closeRows").innerHTML = renderRows(key, "close");
+    }
+
+    $("trimFilter").addEventListener("change", (event) => render(event.target.value));
+    render("total");
+  </script>
+</body>
+</html>
