@@ -305,6 +305,44 @@
     .split-card b { display: block; color: var(--muted); font-size: 12px; }
     .split-card strong { display: block; margin-top: 8px; font-size: 22px; }
     .split-card span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .counterfactual-card {
+      grid-column: 1 / -1;
+      border: 1px solid rgba(223,17,25,.22);
+      border-radius: 10px;
+      padding: 16px;
+      background:
+        linear-gradient(135deg, rgba(17,17,17,.97), rgba(51,27,27,.94)),
+        #111;
+      color: #fff;
+      display: grid;
+      grid-template-columns: 1fr repeat(3, minmax(120px, .55fr));
+      gap: 14px;
+      align-items: center;
+      box-shadow: 0 18px 40px rgba(17,17,17,.16);
+    }
+    .counterfactual-card b {
+      display: block;
+      color: #ffb9b9;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 7px;
+    }
+    .counterfactual-card strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1;
+      color: #fff;
+    }
+    .counterfactual-card span {
+      display: block;
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 7px;
+    }
+    .counterfactual-title strong { font-size: 19px; line-height: 1.1; }
+    .counterfactual-loss strong { color: #ffdbdb; }
     .pipeline {
       display: flex;
       flex-direction: column;
@@ -632,6 +670,7 @@
       .brand-summary { grid-template-columns: 1fr; }
       .filters, .kpi-grid, .pipeline { grid-template-columns: 1fr; }
       .impact-summary { grid-template-columns: 1fr; }
+      .counterfactual-card { grid-template-columns: 1fr; }
       .flow-card { grid-template-columns: 1fr; }
       h1 { font-size: 21px; }
     }
@@ -1505,7 +1544,14 @@
         return createdMonth && createdMonth === r.Mes;
       }).reduce((a, r) => a + Number(r.Pago || 0), 0);
       const nuevaSinMatricula = Math.max(0, acq - matriculaAttrib - ajusteIntro);
+      const saleWithoutLlama = Math.max(0, m.total - acq);
       document.querySelector('#salesSplit').innerHTML = [
+        '<div class="counterfactual-card">' +
+          '<div class="counterfactual-title"><b>Escenario sin Llama Leads</b><strong>Esto es lo que el negocio probablemente no habría capturado con la misma velocidad.</strong><span>Simulación simple del filtro actual: facturación real menos impacto Llama Leads documentado.</span></div>' +
+          '<div><b>Venta real</b><strong>' + money(m.total) + '</strong><span>Facturación del filtro actual.</span></div>' +
+          '<div><b>Sin Llama Leads</b><strong>' + money(saleWithoutLlama) + '</strong><span>Venta estimada sin clientes atribuidos.</span></div>' +
+          '<div class="counterfactual-loss"><b>Brecha generada</b><strong>' + money(acq) + '</strong><span>' + pct(m.total ? acq / m.total : 0) + ' de la venta depende del impacto Llama.</span></div>' +
+        '</div>',
         '<div class="split-card"><b>Venta nueva atribuida</b><strong>' + money(nuevaSinMatricula) + '</strong><span>sin matrícula</span></div>',
         '<div class="split-card"><b>Matrícula atribuida</b><strong>' + money(matriculaAttrib) + '</strong><span>costo separado</span></div>',
         '<div class="split-card"><b>Gap Trim Intro Mendiburu</b><strong>' + money(introGap) + '</strong><span>S/ 900 por Intro visible como S/ 1,000</span></div>',
