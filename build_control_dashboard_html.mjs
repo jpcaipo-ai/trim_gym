@@ -757,6 +757,10 @@ const html = `<!doctype html>
         <div class="panel-title"><h2>Facturación total mes a mes</h2><span class="hint">nuevos, renovaciones, reinscripciones y matrículas</span></div>
         <div class="chart-box"><canvas id="salesChart"></canvas></div>
       </div>
+      <div class="panel wide">
+        <div class="panel-title"><h2>Escenario sin Llama Leads mes a mes</h2><span class="hint">facturaciÃ³n real vs venta que se habrÃ­a perdido</span></div>
+        <div class="chart-box"><canvas id="noLlamaChart"></canvas></div>
+      </div>
       <div class="panel">
         <div class="panel-title"><h2>Venta por origen / lead</h2><span class="hint">top canales del filtro</span></div>
         <div class="chart-box"><canvas id="sourceChart"></canvas></div>
@@ -1749,6 +1753,90 @@ const html = `<!doctype html>
         legendX += Math.max(86, ctx.measureText(s.label).width + 38);
       });
     }
+    function noLlamaScenarioChart(id, rows) {
+      const totalRows = group(rows, r => r.Mes, (r, key) => ({ key, total: 0 }), (s, r) => {
+        s.total += Number(r.Pago || 0);
+      });
+      const impactRows = group(acquisitionMonthlyTotals(false), r => r.key, (r, key) => ({ key, impact: 0 }), (s, r) => {
+        s.impact += Number(r.value || 0);
+      });
+      const totalMap = new Map(totalRows.map(r => [r.key, r.total]));
+      const impactMap = new Map(impactRows.map(r => [r.key, r.impact]));
+      const monthKeys = [...new Set([...totalMap.keys(), ...impactMap.keys()])].sort();
+      const months = monthKeys.map(key => {
+        const total = totalMap.get(key) || 0;
+        const impact = Math.min(total, impactMap.get(key) || 0);
+        return { key, total, impact, without: Math.max(0, total - impact) };
+      });
+      const { ctx, w, h } = canvasCtx(id);
+      ctx.clearRect(0, 0, w, h);
+      const pad = { l: 64, r: 30, t: 50, b: 66 };
+      const max = Math.max(...months.map(r => r.total), 1);
+      ctx.strokeStyle = '#d7dee9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t);
+      ctx.lineTo(pad.l, h - pad.b);
+      ctx.lineTo(w - pad.r, h - pad.b);
+      ctx.stroke();
+      const slot = (w - pad.l - pad.r) / Math.max(months.length, 1);
+      const bw = Math.max(18, Math.min(56, slot * .52));
+      months.forEach((row, i) => {
+        const x = pad.l + i * slot + (slot - bw) / 2;
+        const baseH = (h - pad.t - pad.b) * row.without / max;
+        const impactH = (h - pad.t - pad.b) * row.impact / max;
+        let y = h - pad.b;
+        if (baseH > 0) {
+          y -= baseH;
+          ctx.fillStyle = '#111111';
+          ctx.fillRect(x, y, bw, baseH);
+          if (baseH > 24) {
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Segoe UI, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(money(row.without), x + bw / 2, y + baseH / 2 + 4);
+          }
+        }
+        if (impactH > 0) {
+          y -= impactH;
+          const grad = ctx.createLinearGradient(x, y, x + bw, y + impactH);
+          grad.addColorStop(0, '#df1119');
+          grad.addColorStop(1, '#1f8a4c');
+          ctx.fillStyle = grad;
+          ctx.fillRect(x, y, bw, impactH);
+          if (impactH > 22) {
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Segoe UI, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(money(row.impact), x + bw / 2, y + impactH / 2 + 4);
+          }
+        }
+        ctx.fillStyle = '#172033';
+        ctx.font = '11px Segoe UI, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(money(row.total), x + bw / 2, Math.max(14, y - 8));
+        ctx.save();
+        ctx.translate(x + bw / 2, h - 16);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillStyle = '#667085';
+        ctx.textAlign = 'right';
+        ctx.fillText(row.key, 0, 0);
+        ctx.restore();
+      });
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(pad.l, 14, 11, 11);
+      ctx.fillStyle = '#334155';
+      ctx.font = '11px Segoe UI, Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('Escenario sin Llama Leads', pad.l + 16, 24);
+      ctx.fillStyle = '#df1119';
+      ctx.fillRect(pad.l + 198, 14, 11, 11);
+      ctx.fillStyle = '#334155';
+      ctx.fillText('Brecha / impacto Llama', pad.l + 214, 24);
+      ctx.fillStyle = '#667085';
+      ctx.textAlign = 'right';
+      ctx.fillText('barra completa = facturaciÃ³n real', w - pad.r, 24);
+    }
     function attributedComboChart(id, rows) {
       const acq = acquisitionMonthlyTotals(false);
       const actual = group(rows.filter(r => r['Atribuido agencia'] === 'Si'), r => r.Mes, (r, key) => ({ key, actual: 0 }), (s, r) => {
@@ -2103,6 +2191,7 @@ const html = `<!doctype html>
       }).sort((a, b) => a.key.localeCompare(b.key));
       attributedComboChart('#attribChart', rows);
       totalBillingStackedChart('#salesChart', rows);
+      noLlamaScenarioChart('#noLlamaChart', rows);
       const source = group(rows, r => r.Origen || 'Sin origen', (r, key) => ({ key, sale: 0 }), (s, r) => { s.sale += Number(r.Pago || 0); }).sort((a, b) => b.sale - a.sale).slice(0, 8);
       barChart('#sourceChart', source.map(r => r.key), source.map(r => r.sale), { money: true, horizontal: true });
       const pipelineLabel = selectedLeadPipelineLabel();
