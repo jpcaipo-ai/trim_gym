@@ -928,8 +928,14 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-06': 798
     };
     const countedIntroGapTargets = {
+      'Trim 1 - Mendiburu|2026-04': 7200,
+      'Trim 1 - Mendiburu|2026-05': 2700,
       'Trim 1 - Mendiburu|2026-06': 8100
     };
+    const introGapAlreadyInTarget = new Set([
+      'Trim 1 - Mendiburu|2026-04',
+      'Trim 1 - Mendiburu|2026-05'
+    ]);
     const leadPipelineBySede = {
       'Trim 1 - Mendiburu': {
         spend: 1040,
@@ -1031,7 +1037,7 @@ const html = `<!doctype html>
       'Es matricula': 'No',
       'Es ajuste intro': 'Si'
     }));
-    const matriculaAudit = { atribuida: 25536, realSistema: 12099, estimadaNoVisible: 13437 };
+    const matriculaAudit = { estimadaNoVisible: 23940 };
     function visibleMatriculaPaid(sede, mes) {
       return (METRICS.Compras || []).filter(r => {
         return r.Sede === sede
@@ -1341,17 +1347,20 @@ const html = `<!doctype html>
         s.base += Number(r.Base || 0);
       });
       return grouped.map(g => {
+        const groupKey = g.sede + '|' + g.mes;
         const totalConMatricula = g.target ?? g.base;
         const matriculaVisible = visibleAcquisitionMatriculaPaid(g.sede, g.mes);
         const matriculaFaltante = g.matriculaTarget != null
           ? missingMatriculaTarget(g.sede, g.mes, g.matriculaTarget)
           : (g.target ? Math.max(0, g.target - g.base - matriculaVisible) : 0);
         const matricula = matriculaVisible + matriculaFaltante;
-        const ajusteIntro = missingIntroGapTarget(g.sede, g.mes, countedIntroGapTargets[g.sede + '|' + g.mes] || 0);
-        const nuevos = Math.max(0, totalConMatricula - matricula);
+        const ajusteIntro = missingIntroGapTarget(g.sede, g.mes, countedIntroGapTargets[groupKey] || 0);
+        const ajusteIntroExtra = introGapAlreadyInTarget.has(groupKey) ? 0 : ajusteIntro;
+        const totalAuditado = totalConMatricula + ajusteIntroExtra;
+        const nuevos = Math.max(0, totalAuditado - matricula - ajusteIntro);
         if (els.matricula.value === 'Solo matrícula') return { key: g.mes, sede: g.sede, value: matricula, nuevos: 0, matricula };
         if (els.matricula.value === 'Sin matrícula') return { key: g.mes, sede: g.sede, value: nuevos + ajusteIntro, nuevos, matricula: 0, ajusteIntro };
-        return { key: g.mes, sede: g.sede, value: totalConMatricula + ajusteIntro, nuevos, matricula, ajusteIntro };
+        return { key: g.mes, sede: g.sede, value: totalAuditado, nuevos, matricula, ajusteIntro };
       });
     }
     function acquisitionTotal(ignorePeriod = false, period = null) {
@@ -1469,8 +1478,7 @@ const html = `<!doctype html>
     function renderImpactSummary(p, matriculaAttrib, ajusteIntro) {
       const introGap = countedIntroGapTotal(false);
       const finalSold = p.total;
-      const priorIntroGap = Object.values(introAdjustmentTargets).reduce((a, v) => a + Number(v || 0), 0);
-      const documentedAdjustments = matriculaAudit.estimadaNoVisible + priorIntroGap + introGap;
+      const documentedAdjustments = matriculaAudit.estimadaNoVisible + introGap;
       const correctedImpact = finalSold + documentedAdjustments;
       const adsJune2026 = 3923.69;
       const serviceJune2026 = 4318;
@@ -1497,8 +1505,8 @@ const html = `<!doctype html>
           '<div class="impact-card"><b>Retorno real vs inversión</b><strong>' + roiRealMultiple.toFixed(1).replace('.', ',') + 'x</strong><span>Sobre venta real en sistema, sin ajustes encima.</span></div>' +
           '<div class="impact-card"><b>Retorno auditado vs inversión</b><strong>' + roiAuditedMultiple.toFixed(1).replace('.', ',') + 'x</strong><span>Sobre impacto total auditado.</span></div>' +
           '<div class="impact-card"><b>Calidad del crecimiento</b><strong>' + pct(recompras) + '</strong><span>Recompra de generados; activos actuales ' + pct(activeRate) + '.</span></div>' +
-          '<div class="impact-card"><b>Gap Trim Intro Mendiburu</b><strong>' + money(introGap) + '</strong><span>S/ 900 sumado por cada Intro de Mendiburu visible como S/ 1,000 en junio.</span></div>' +
-          '<div class="impact-card"><b>Matrícula no visible</b><strong>' + money(matriculaAudit.estimadaNoVisible) + '</strong><span>' + money(matriculaAudit.atribuida) + ' atribuida vs ' + money(matriculaAudit.realSistema) + ' visible en sistema.</span></div>' +
+          '<div class="impact-card"><b>Gap Trim Intro Mendiburu</b><strong>' + money(introGap) + '</strong><span>S/ 900 documentado cuando el Intro aparece visible como S/ 1,000.</span></div>' +
+          '<div class="impact-card"><b>Matrícula no visible</b><strong>' + money(matriculaAudit.estimadaNoVisible) + '</strong><span>Ene-mar: S/ 399 por nuevo; abr-jun: Intro S/ 900 y PT S/ 399 cuando no aparece como fila.</span></div>' +
         '</div>' +
         '<div class="method-note"><b>Cómo medir impacto:</b> 1) venta nueva atribuida corregida, 2) matrículas cobradas por esos clientes, 3) recompra/LTV posterior, 4) clientes activos vs vencidos, 5) payback y retorno contra inversión. Así se mide el aporte de Llama Leads como crecimiento incremental y no solo como leads sueltos.</div>';
     }
