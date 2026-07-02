@@ -1777,9 +1777,10 @@
           ctx.fillRect(x, y, bw, baseH);
           if (baseH > 24) {
             ctx.fillStyle = '#fff';
-            ctx.font = '10px Segoe UI, Arial';
+            ctx.font = '700 10px Segoe UI, Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(money(row.without), x + bw / 2, y + baseH / 2 + 4);
+            ctx.fillText('Sin Llama', x + bw / 2, y + baseH / 2 - 4);
+            ctx.fillText(money(row.without), x + bw / 2, y + baseH / 2 + 9);
           }
         }
         if (impactH > 0) {
@@ -1791,15 +1792,16 @@
           ctx.fillRect(x, y, bw, impactH);
           if (impactH > 22) {
             ctx.fillStyle = '#fff';
-            ctx.font = '10px Segoe UI, Arial';
+            ctx.font = '700 10px Segoe UI, Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(money(row.impact), x + bw / 2, y + impactH / 2 + 4);
+            ctx.fillText('+ Llama', x + bw / 2, y + impactH / 2 - 4);
+            ctx.fillText(money(row.impact), x + bw / 2, y + impactH / 2 + 9);
           }
         }
         ctx.fillStyle = '#172033';
-        ctx.font = '11px Segoe UI, Arial';
+        ctx.font = '700 11px Segoe UI, Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(money(row.total), x + bw / 2, Math.max(14, y - 8));
+        ctx.fillText('Real ' + money(row.total), x + bw / 2, Math.max(14, y - 8));
         ctx.save();
         ctx.translate(x + bw / 2, h - 16);
         ctx.rotate(-Math.PI / 4);
