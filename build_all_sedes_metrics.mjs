@@ -31,6 +31,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Trim 1 - Mendiburu).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (mendiburu) (2).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (17) - Mendiburu.xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu - Trim 1).xls",
     ],
     clients: trim1Clients,
   },

@@ -19,6 +19,21 @@ const juneFiles = [
   },
 ];
 
+const julyFiles = [
+  {
+    sede: "Trim 1 - Mendiburu",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu - Trim 1).xls",
+  },
+  {
+    sede: "Trim 2 - Balboa",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa - Trim 2).xls",
+  },
+  {
+    sede: "Trim 3 - Benavides",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides - Trim 3).xls",
+  },
+];
+
 const manualJuneRows = [
   {
     Sede: "Trim 2 - Balboa",
@@ -228,9 +243,20 @@ for (const { sede, file } of juneFiles) {
     .filter((row) => row.Mes === "2026-06");
   juneRows.push(...parsed);
 }
+const julyRows = [];
+for (const { sede, file } of julyFiles) {
+  const parsed = parseHtmlTable(await fs.readFile(file, "utf8"))
+    .map((row) => toControlRow(sede, row))
+    .filter((row) => row.Mes === "2026-07");
+  julyRows.push(...parsed);
+}
 
-const replacementSedes = new Set(juneFiles.map((f) => f.sede));
-const baseRows = (previous.ventas || []).filter((row) => !(replacementSedes.has(row.Sede) && row.Mes === "2026-06"));
+const replacementSpecs = [
+  ...juneFiles.map((f) => `${f.sede}|2026-06`),
+  ...julyFiles.map((f) => `${f.sede}|2026-07`),
+];
+const replacementKeys = new Set(replacementSpecs);
+const baseRows = (previous.ventas || []).filter((row) => !replacementKeys.has(`${row.Sede}|${row.Mes}`));
 const seen = new Set(juneRows.map(controlSaleKey));
 for (const row of manualJuneRows) {
   const key = controlSaleKey(row);
@@ -239,7 +265,7 @@ for (const row of manualJuneRows) {
     seen.add(key);
   }
 }
-const ventas = [...baseRows, ...juneRows].sort((a, b) =>
+const ventas = [...baseRows, ...juneRows, ...julyRows].sort((a, b) =>
   `${a.Sede}|${a.Mes}|${a.Inscripcion}|${a.Cliente}`.localeCompare(`${b.Sede}|${b.Mes}|${b.Inscripcion}|${b.Cliente}`),
 );
 

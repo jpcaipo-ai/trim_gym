@@ -11,6 +11,7 @@ const sourcePaths = [
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Trim 1 - Mendiburu).xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (mendiburu) (2).xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (17) - Mendiburu.xls",
+  "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu - Trim 1).xls",
 ];
 const outDir = path.resolve("outputs", "trim1_mendiburu");
 const outPath = path.join(outDir, "cruce_trim1_mendiburu_compras.xlsx");
@@ -59,6 +60,13 @@ const clients = [
   { month: "Junio 2026", name: "Paolo Arauco", phone: "969714361", amount: 1900, source: "Linktree" },
   { month: "Junio 2026", name: "Eduardo Teran", phone: "51949429958", amount: 2219, source: "Form Web" },
   { month: "Junio 2026", name: "Mayte Carolina Pachas Paulino", phone: "51995551847", amount: 1900, source: "Mirko" },
+  { month: "Julio 2026", name: "Javier Eduardo Bless Cabrejos", phone: "999459492", amount: 2219, source: "Form Meta" },
+  { month: "Julio 2026", name: "Nathaly Belapatiño", phone: "993879277", amount: 1900, source: "Web" },
+  { month: "Julio 2026", name: "Sve Chang", phone: "986185776", amount: 1900, source: "Linktree" },
+  { month: "Julio 2026", name: "Carolina Hiraoka", phone: "940219366", amount: 2219, source: "Linktree" },
+  { month: "Julio 2026", name: "Diego Mariño", phone: "941568528", amount: 1900, source: "Linktree" },
+  { month: "Julio 2026", name: "Marcela Noblecilla", phone: "998678319", amount: 1900, source: "Form Meta" },
+  { month: "Julio 2026", name: "Rocio Cespedes", phone: "992978868", amount: 1900, source: "DM" },
 ];
 
 function decodeEntities(text) {

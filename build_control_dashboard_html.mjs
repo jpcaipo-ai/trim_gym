@@ -758,7 +758,7 @@ const html = `<!doctype html>
         <div class="chart-box"><canvas id="salesChart"></canvas></div>
       </div>
       <div class="panel wide">
-        <div class="panel-title"><h2>Escenario sin Llama Leads mes a mes</h2><span class="hint">facturaciÃ³n real vs venta que se habrÃ­a perdido</span></div>
+        <div class="panel-title"><h2>Escenario sin Llama Leads mes a mes</h2><span class="hint">facturacion estimada sin clientes atribuidos</span></div>
         <div class="chart-box"><canvas id="noLlamaChart"></canvas></div>
       </div>
       <div class="panel">
@@ -909,7 +909,10 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-05': 17446,
       'Trim 1 - Mendiburu|2026-06': 11618,
       'Trim 2 - Balboa|2026-06': 18343,
-      'Trim 3 - Benavides|2026-06': 24696
+      'Trim 3 - Benavides|2026-06': 24696,
+      'Trim 1 - Mendiburu|2026-07': 14736,
+      'Trim 2 - Balboa|2026-07': 10936,
+      'Trim 3 - Benavides|2026-07': 13300
     };
     const acquisitionMatriculaTargets = {
       'Trim 1 - Mendiburu|2026-01': 1197,
@@ -929,16 +932,21 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-05': 798,
       'Trim 1 - Mendiburu|2026-06': 399,
       'Trim 2 - Balboa|2026-06': 1197,
-      'Trim 3 - Benavides|2026-06': 798
+      'Trim 3 - Benavides|2026-06': 798,
+      'Trim 1 - Mendiburu|2026-07': 2598,
+      'Trim 2 - Balboa|2026-07': 3498,
+      'Trim 3 - Benavides|2026-07': 6300
     };
     const countedIntroGapTargets = {
       'Trim 1 - Mendiburu|2026-04': 7200,
       'Trim 1 - Mendiburu|2026-05': 2700,
-      'Trim 1 - Mendiburu|2026-06': 8100
+      'Trim 1 - Mendiburu|2026-06': 8100,
+      'Trim 1 - Mendiburu|2026-07': 4500
     };
     const introGapAlreadyInTarget = new Set([
       'Trim 1 - Mendiburu|2026-04',
-      'Trim 1 - Mendiburu|2026-05'
+      'Trim 1 - Mendiburu|2026-05',
+      'Trim 1 - Mendiburu|2026-07'
     ]);
     const leadPipelineBySede = {
       'Trim 1 - Mendiburu': {
@@ -1771,7 +1779,7 @@ const html = `<!doctype html>
       const { ctx, w, h } = canvasCtx(id);
       ctx.clearRect(0, 0, w, h);
       const pad = { l: 64, r: 30, t: 50, b: 66 };
-      const max = Math.max(...months.map(r => r.total), 1);
+      const max = Math.max(...months.map(r => r.without), 1);
       ctx.strokeStyle = '#d7dee9';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -1784,7 +1792,6 @@ const html = `<!doctype html>
       months.forEach((row, i) => {
         const x = pad.l + i * slot + (slot - bw) / 2;
         const baseH = (h - pad.t - pad.b) * row.without / max;
-        const impactH = (h - pad.t - pad.b) * row.impact / max;
         let y = h - pad.b;
         if (baseH > 0) {
           y -= baseH;
@@ -1798,25 +1805,10 @@ const html = `<!doctype html>
             ctx.fillText(money(row.without), x + bw / 2, y + baseH / 2 + 9);
           }
         }
-        if (impactH > 0) {
-          y -= impactH;
-          const grad = ctx.createLinearGradient(x, y, x + bw, y + impactH);
-          grad.addColorStop(0, '#df1119');
-          grad.addColorStop(1, '#1f8a4c');
-          ctx.fillStyle = grad;
-          ctx.fillRect(x, y, bw, impactH);
-          if (impactH > 22) {
-            ctx.fillStyle = '#fff';
-            ctx.font = '700 10px Segoe UI, Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('+ Llama', x + bw / 2, y + impactH / 2 - 4);
-            ctx.fillText(money(row.impact), x + bw / 2, y + impactH / 2 + 9);
-          }
-        }
         ctx.fillStyle = '#172033';
         ctx.font = '700 11px Segoe UI, Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Real ' + money(row.total), x + bw / 2, Math.max(14, y - 8));
+        ctx.fillText(money(row.without), x + bw / 2, Math.max(14, y - 8));
         ctx.save();
         ctx.translate(x + bw / 2, h - 16);
         ctx.rotate(-Math.PI / 4);
@@ -1831,13 +1823,9 @@ const html = `<!doctype html>
       ctx.font = '11px Segoe UI, Arial';
       ctx.textAlign = 'left';
       ctx.fillText('Escenario sin Llama Leads', pad.l + 16, 24);
-      ctx.fillStyle = '#df1119';
-      ctx.fillRect(pad.l + 198, 14, 11, 11);
-      ctx.fillStyle = '#334155';
-      ctx.fillText('Brecha / impacto Llama', pad.l + 214, 24);
       ctx.fillStyle = '#667085';
       ctx.textAlign = 'right';
-      ctx.fillText('barra completa = facturaciÃ³n real', w - pad.r, 24);
+      ctx.fillText('solo facturacion sin Llama Leads', w - pad.r, 24);
     }
     function attributedComboChart(id, rows) {
       const acq = acquisitionMonthlyTotals(false);
