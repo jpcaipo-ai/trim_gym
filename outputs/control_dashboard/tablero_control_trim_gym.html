@@ -817,7 +817,7 @@
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
     const monthOptions = ['Todos', ...Object.entries(monthNames).map(([num, name]) => num + ' - ' + name)];
-    const captureMonthMap = {'Octubre 2025':'2025-10','Noviembre 2025':'2025-11','Diciembre 2025':'2025-12','Enero 2026':'2026-01','Febrero 2026':'2026-02','Marzo 2026':'2026-03','Abril 2026':'2026-04','Mayo 2026':'2026-05','Junio 2026':'2026-06'};
+    const captureMonthMap = {'Octubre 2025':'2025-10','Noviembre 2025':'2025-11','Diciembre 2025':'2025-12','Enero 2026':'2026-01','Febrero 2026':'2026-02','Marzo 2026':'2026-03','Abril 2026':'2026-04','Mayo 2026':'2026-05','Junio 2026':'2026-06','Julio 2026':'2026-07'};
     const captureMonthLabel = key => {
       const [year, month] = String(key || '').split('-');
       return monthNames[month] && year ? monthNames[month] + ' ' + year : '';
