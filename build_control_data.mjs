@@ -22,15 +22,15 @@ const juneFiles = [
 const julyFiles = [
   {
     sede: "Trim 1 - Mendiburu",
-    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu - Trim 1).xls",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (3).xls",
   },
   {
     sede: "Trim 2 - Balboa",
-    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa - Trim 2).xls",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (4).xls",
   },
   {
     sede: "Trim 3 - Benavides",
-    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides - Trim 3).xls",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (4).xls",
   },
 ];
 

@@ -15,6 +15,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes Balboa.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (17) - Balboa.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa - Trim 2).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (4).xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Jorge Salcedo", amount: 779, source: "Form web" },
@@ -67,6 +68,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes Benavides.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (17) - Benavides.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides - Trim 3).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (4).xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Stefani Canzio", amount: 2219, source: "Instagram" },

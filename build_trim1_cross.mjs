@@ -12,6 +12,7 @@ const sourcePaths = [
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (mendiburu) (2).xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (17) - Mendiburu.xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu - Trim 1).xls",
+  "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (3).xls",
 ];
 const outDir = path.resolve("outputs", "trim1_mendiburu");
 const outPath = path.join(outDir, "cruce_trim1_mendiburu_compras.xlsx");
