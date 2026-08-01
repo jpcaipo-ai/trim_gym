@@ -910,9 +910,9 @@ const html = `<!doctype html>
       'Trim 1 - Mendiburu|2026-06': 11618,
       'Trim 2 - Balboa|2026-06': 18343,
       'Trim 3 - Benavides|2026-06': 24696,
-      'Trim 1 - Mendiburu|2026-07': 14736,
+      'Trim 1 - Mendiburu|2026-07': 18855,
       'Trim 2 - Balboa|2026-07': 10936,
-      'Trim 3 - Benavides|2026-07': 13300
+      'Trim 3 - Benavides|2026-07': 17100
     };
     const acquisitionMatriculaTargets = {
       'Trim 1 - Mendiburu|2026-01': 1197,
@@ -933,15 +933,15 @@ const html = `<!doctype html>
       'Trim 1 - Mendiburu|2026-06': 399,
       'Trim 2 - Balboa|2026-06': 1197,
       'Trim 3 - Benavides|2026-06': 798,
-      'Trim 1 - Mendiburu|2026-07': 2598,
+      'Trim 1 - Mendiburu|2026-07': 3897,
       'Trim 2 - Balboa|2026-07': 3498,
-      'Trim 3 - Benavides|2026-07': 6300
+      'Trim 3 - Benavides|2026-07': 8100
     };
     const countedIntroGapTargets = {
       'Trim 1 - Mendiburu|2026-04': 7200,
       'Trim 1 - Mendiburu|2026-05': 2700,
       'Trim 1 - Mendiburu|2026-06': 8100,
-      'Trim 1 - Mendiburu|2026-07': 4500
+      'Trim 1 - Mendiburu|2026-07': 5400
     };
     const introGapAlreadyInTarget = new Set([
       'Trim 1 - Mendiburu|2026-04',

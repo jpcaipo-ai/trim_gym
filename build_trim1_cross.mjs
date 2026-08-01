@@ -68,6 +68,8 @@ const clients = [
   { month: "Julio 2026", name: "Diego Mariño", phone: "941568528", amount: 1900, source: "Linktree" },
   { month: "Julio 2026", name: "Marcela Noblecilla", phone: "998678319", amount: 1900, source: "Form Meta" },
   { month: "Julio 2026", name: "Rocio Cespedes", phone: "992978868", amount: 1900, source: "DM" },
+  { month: "Julio 2026", name: "Jacqueline Idiaquez", phone: "997512348", amount: 2219, source: "Form Web" },
+  { month: "Julio 2026", name: "Lylian Leon", phone: "996500716", amount: 1900, source: "Form Web" },
 ];
 
 function decodeEntities(text) {

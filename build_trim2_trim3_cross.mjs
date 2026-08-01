@@ -133,6 +133,8 @@ const reports = [
       { month: "Julio 2026", name: "Rodrigo Castro", phone: "933288297", amount: 1900, source: "Form Meta" },
       { month: "Julio 2026", name: "Juan Carlos Obispo Irazabal", phone: "987599665", amount: 1900, source: "Linktree" },
       { month: "Julio 2026", name: "Mariana Elisa Galvez Chirinos", phone: "986766080", amount: 1900, source: "Linktree" },
+      { month: "Julio 2026", name: "Mariano Salas", phone: "977489398", amount: 1900, source: "Linktree" },
+      { month: "Julio 2026", name: "Andrea Lorena Aspiros", phone: "994030257", amount: 1900, source: "Linktree" },
     ],
     manualSales: [],
   },
