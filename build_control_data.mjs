@@ -34,6 +34,21 @@ const julyFiles = [
   },
 ];
 
+const augustFiles = [
+  {
+    sede: "Trim 1 - Mendiburu",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (19)  Mendiburu.xls",
+  },
+  {
+    sede: "Trim 2 - Balboa",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (20) - Balboa.xls",
+  },
+  {
+    sede: "Trim 3 - Benavides",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Benavides.xls",
+  },
+];
+
 const manualJuneRows = [
   {
     Sede: "Trim 2 - Balboa",
@@ -250,10 +265,18 @@ for (const { sede, file } of julyFiles) {
     .filter((row) => row.Mes === "2026-07");
   julyRows.push(...parsed);
 }
+const augustRows = [];
+for (const { sede, file } of augustFiles) {
+  const parsed = parseHtmlTable(await fs.readFile(file, "utf8"))
+    .map((row) => toControlRow(sede, row))
+    .filter((row) => row.Mes === "2026-08");
+  augustRows.push(...parsed);
+}
 
 const replacementSpecs = [
   ...juneFiles.map((f) => `${f.sede}|2026-06`),
   ...julyFiles.map((f) => `${f.sede}|2026-07`),
+  ...augustFiles.map((f) => `${f.sede}|2026-08`),
 ];
 const replacementKeys = new Set(replacementSpecs);
 const baseRows = (previous.ventas || []).filter((row) => !replacementKeys.has(`${row.Sede}|${row.Mes}`));
@@ -265,7 +288,7 @@ for (const row of manualJuneRows) {
     seen.add(key);
   }
 }
-const ventas = [...baseRows, ...juneRows, ...julyRows].sort((a, b) =>
+const ventas = [...baseRows, ...juneRows, ...julyRows, ...augustRows].sort((a, b) =>
   `${a.Sede}|${a.Mes}|${a.Inscripcion}|${a.Cliente}`.localeCompare(`${b.Sede}|${b.Mes}|${b.Inscripcion}|${b.Cliente}`),
 );
 

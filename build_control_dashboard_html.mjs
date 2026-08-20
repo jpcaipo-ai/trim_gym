@@ -832,7 +832,7 @@ const html = `<!doctype html>
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
     const monthOptions = ['Todos', ...Object.entries(monthNames).map(([num, name]) => num + ' - ' + name)];
-    const captureMonthMap = {'Octubre 2025':'2025-10','Noviembre 2025':'2025-11','Diciembre 2025':'2025-12','Enero 2026':'2026-01','Febrero 2026':'2026-02','Marzo 2026':'2026-03','Abril 2026':'2026-04','Mayo 2026':'2026-05','Junio 2026':'2026-06','Julio 2026':'2026-07'};
+    const captureMonthMap = {'Octubre 2025':'2025-10','Noviembre 2025':'2025-11','Diciembre 2025':'2025-12','Enero 2026':'2026-01','Febrero 2026':'2026-02','Marzo 2026':'2026-03','Abril 2026':'2026-04','Mayo 2026':'2026-05','Junio 2026':'2026-06','Julio 2026':'2026-07','Agosto 2026':'2026-08'};
     const captureMonthLabel = key => {
       const [year, month] = String(key || '').split('-');
       return monthNames[month] && year ? monthNames[month] + ' ' + year : '';
@@ -912,7 +912,10 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-06': 24696,
       'Trim 1 - Mendiburu|2026-07': 18855,
       'Trim 2 - Balboa|2026-07': 10936,
-      'Trim 3 - Benavides|2026-07': 17100
+      'Trim 3 - Benavides|2026-07': 17100,
+      'Trim 1 - Mendiburu|2026-08': 14683,
+      'Trim 2 - Balboa|2026-08': 3800,
+      'Trim 3 - Benavides|2026-08': 11400
     };
     const acquisitionMatriculaTargets = {
       'Trim 1 - Mendiburu|2026-01': 1197,
@@ -935,48 +938,53 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-06': 798,
       'Trim 1 - Mendiburu|2026-07': 3897,
       'Trim 2 - Balboa|2026-07': 3498,
-      'Trim 3 - Benavides|2026-07': 8100
+      'Trim 3 - Benavides|2026-07': 8100,
+      'Trim 1 - Mendiburu|2026-08': 4899,
+      'Trim 2 - Balboa|2026-08': 1800,
+      'Trim 3 - Benavides|2026-08': 5400
     };
     const countedIntroGapTargets = {
       'Trim 1 - Mendiburu|2026-04': 7200,
       'Trim 1 - Mendiburu|2026-05': 2700,
       'Trim 1 - Mendiburu|2026-06': 8100,
-      'Trim 1 - Mendiburu|2026-07': 5400
+      'Trim 1 - Mendiburu|2026-07': 5400,
+      'Trim 1 - Mendiburu|2026-08': 5400
     };
     const introGapAlreadyInTarget = new Set([
       'Trim 1 - Mendiburu|2026-04',
       'Trim 1 - Mendiburu|2026-05',
-      'Trim 1 - Mendiburu|2026-07'
+      'Trim 1 - Mendiburu|2026-07',
+      'Trim 1 - Mendiburu|2026-08'
     ]);
     const leadPipelineBySede = {
       'Trim 1 - Mendiburu': {
-        spend: 1040,
+        spend: 1514,
         stages: [
-          { label: 'Nuevos leads', value: 137, cp: 7.59 },
-          { label: 'Formulario', value: 109, cp: 9.54 },
-          { label: 'Citas agendadas', value: 28, cp: 37.13 },
-          { label: 'Citas asistidas', value: 25, cp: 41.58 },
-          { label: 'Cierres', value: 10, cp: 103.96 }
+          { label: 'Nuevos leads', value: 423, cp: 3.58 },
+          { label: 'Formulario', value: 359, cp: 4.22 },
+          { label: 'Citas agendadas', value: 23, cp: 65.87 },
+          { label: 'Citas asistidas', value: 21, cp: 72.14 },
+          { label: 'Cierres', value: 9, cp: 168.33 }
         ]
       },
       'Trim 2 - Balboa': {
-        spend: 1395,
+        spend: 1965,
         stages: [
-          { label: 'Nuevos leads', value: 166, cp: 8.40 },
-          { label: 'Formulario', value: 109, cp: 12.80 },
-          { label: 'Citas agendadas', value: 33, cp: 42.27 },
-          { label: 'Citas asistidas', value: 25, cp: 55.80 },
-          { label: 'Cierres', value: 9, cp: 154.99 }
+          { label: 'Nuevos leads', value: 553, cp: 3.55 },
+          { label: 'Formulario', value: 485, cp: 4.05 },
+          { label: 'Citas agendadas', value: 37, cp: 53.10 },
+          { label: 'Citas asistidas', value: 29, cp: 67.75 },
+          { label: 'Cierres', value: 5, cp: 392.93 }
         ]
       },
       'Trim 3 - Benavides': {
-        spend: 1421,
+        spend: 1876,
         stages: [
-          { label: 'Nuevos leads', value: 189, cp: 7.52 },
-          { label: 'Formulario', value: 132, cp: 10.76 },
-          { label: 'Citas agendadas', value: 36, cp: 39.47 },
-          { label: 'Citas asistidas', value: 30, cp: 47.36 },
-          { label: 'Cierres', value: 13, cp: 109.30 }
+          { label: 'Nuevos leads', value: 495, cp: 3.79 },
+          { label: 'Formulario', value: 398, cp: 4.72 },
+          { label: 'Citas agendadas', value: 32, cp: 58.68 },
+          { label: 'Citas asistidas', value: 23, cp: 81.64 },
+          { label: 'Cierres', value: 9, cp: 208.63 }
         ]
       }
     };
