@@ -14,6 +14,7 @@ const sourcePaths = [
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu - Trim 1).xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (3).xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (19)  Mendiburu.xls",
+  "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (4).xls",
 ];
 const outDir = path.resolve("outputs", "trim1_mendiburu");
 const outPath = path.join(outDir, "cruce_trim1_mendiburu_compras.xlsx");
@@ -78,6 +79,10 @@ const clients = [
   { month: "Agosto 2026", name: "Jacqueline Banchero Herrera", phone: "989174565", amount: 2884, source: "" },
   { month: "Agosto 2026", name: "Maribel Toledo", phone: "949604263", amount: 1900, source: "" },
   { month: "Agosto 2026", name: "Silvina Gorbitz", phone: "997527485", amount: 1900, source: "" },
+  { month: "Agosto 2026", name: "Sandra Contreras", phone: "948067720", amount: 1900, source: "Form Meta" },
+  { month: "Agosto 2026", name: "Federico Leon", phone: "948687720", amount: 1900, source: "Form Meta" },
+  { month: "Agosto 2026", name: "Daniela Door", phone: "997959393", amount: 1900, source: "DM" },
+  { month: "Agosto 2026", name: "Mariela Espino", phone: "968765284", amount: 1900, source: "DM" },
 ];
 
 function decodeEntities(text) {

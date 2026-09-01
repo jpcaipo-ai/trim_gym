@@ -913,9 +913,9 @@ const html = `<!doctype html>
       'Trim 1 - Mendiburu|2026-07': 18855,
       'Trim 2 - Balboa|2026-07': 10936,
       'Trim 3 - Benavides|2026-07': 17100,
-      'Trim 1 - Mendiburu|2026-08': 14284,
-      'Trim 2 - Balboa|2026-08': 3800,
-      'Trim 3 - Benavides|2026-08': 11400
+      'Trim 1 - Mendiburu|2026-08': 21884,
+      'Trim 2 - Balboa|2026-08': 7600,
+      'Trim 3 - Benavides|2026-08': 13300
     };
     const acquisitionMatriculaTargets = {
       'Trim 1 - Mendiburu|2026-01': 1197,
@@ -940,15 +940,15 @@ const html = `<!doctype html>
       'Trim 2 - Balboa|2026-07': 3498,
       'Trim 3 - Benavides|2026-07': 8100,
       'Trim 1 - Mendiburu|2026-08': 5400,
-      'Trim 2 - Balboa|2026-08': 1800,
-      'Trim 3 - Benavides|2026-08': 5400
+      'Trim 2 - Balboa|2026-08': 3600,
+      'Trim 3 - Benavides|2026-08': 6300
     };
     const countedIntroGapTargets = {
       'Trim 1 - Mendiburu|2026-04': 7200,
       'Trim 1 - Mendiburu|2026-05': 2700,
       'Trim 1 - Mendiburu|2026-06': 8100,
       'Trim 1 - Mendiburu|2026-07': 5400,
-      'Trim 1 - Mendiburu|2026-08': 5400
+      'Trim 1 - Mendiburu|2026-08': 9000
     };
     const introGapAlreadyInTarget = new Set([
       'Trim 1 - Mendiburu|2026-04',
@@ -958,33 +958,33 @@ const html = `<!doctype html>
     ]);
     const leadPipelineBySede = {
       'Trim 1 - Mendiburu': {
-        spend: 1514,
+        spend: 1295,
         stages: [
-          { label: 'Nuevos leads', value: 423, cp: 3.58 },
-          { label: 'Formulario', value: 359, cp: 4.22 },
-          { label: 'Citas agendadas', value: 23, cp: 65.87 },
-          { label: 'Citas asistidas', value: 21, cp: 72.14 },
-          { label: 'Cierres', value: 9, cp: 168.33 }
+          { label: 'Nuevos leads', value: 427, cp: 3.03 },
+          { label: 'Formulario', value: 340, cp: 3.81 },
+          { label: 'Citas agendadas', value: 39, cp: 33.20 },
+          { label: 'Citas asistidas', value: 32, cp: 40.46 },
+          { label: 'Cierres', value: 11, cp: 117.70 }
         ]
       },
       'Trim 2 - Balboa': {
-        spend: 1965,
+        spend: 1296,
         stages: [
-          { label: 'Nuevos leads', value: 553, cp: 3.55 },
-          { label: 'Formulario', value: 485, cp: 4.05 },
-          { label: 'Citas agendadas', value: 37, cp: 53.10 },
-          { label: 'Citas asistidas', value: 29, cp: 67.75 },
-          { label: 'Cierres', value: 5, cp: 392.93 }
+          { label: 'Nuevos leads', value: 491, cp: 2.64 },
+          { label: 'Formulario', value: 404, cp: 3.21 },
+          { label: 'Citas agendadas', value: 32, cp: 40.51 },
+          { label: 'Citas asistidas', value: 25, cp: 51.85 },
+          { label: 'Cierres', value: 4, cp: 324.07 }
         ]
       },
       'Trim 3 - Benavides': {
-        spend: 1876,
+        spend: 1299,
         stages: [
-          { label: 'Nuevos leads', value: 495, cp: 3.79 },
-          { label: 'Formulario', value: 398, cp: 4.72 },
-          { label: 'Citas agendadas', value: 32, cp: 58.68 },
-          { label: 'Citas asistidas', value: 23, cp: 81.64 },
-          { label: 'Cierres', value: 9, cp: 208.63 }
+          { label: 'Nuevos leads', value: 460, cp: 2.83 },
+          { label: 'Formulario', value: 369, cp: 3.52 },
+          { label: 'Citas agendadas', value: 48, cp: 27.08 },
+          { label: 'Citas asistidas', value: 33, cp: 39.38 },
+          { label: 'Cierres', value: 7, cp: 185.66 }
         ]
       }
     };

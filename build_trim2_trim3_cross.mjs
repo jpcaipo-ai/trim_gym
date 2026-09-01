@@ -17,6 +17,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa - Trim 2).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (4).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (20) - Balboa.xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (5).xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Jorge Salcedo", amount: 779, source: "Form web" },
@@ -57,6 +58,8 @@ const reports = [
       { month: "Julio 2026", name: "Denisse Cuellar", phone: "998580081", amount: 2219, source: "Web" },
       { month: "Agosto 2026", name: "Italo Carrano Tarrillo", phone: "989005934", amount: 1900, source: "Linktree" },
       { month: "Agosto 2026", name: "Fiorella Valera", phone: "993082794", amount: 1900, source: "Form Meta" },
+      { month: "Agosto 2026", name: "Karina Reyes Badia", phone: "995649000", amount: 1900, source: "Form Meta" },
+      { month: "Agosto 2026", name: "Adriana Ospina Jimenez", phone: "", amount: 1900, source: "DM" },
     ],
   },
   {
@@ -73,6 +76,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides - Trim 3).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (4).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Benavides.xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (5).xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Stefani Canzio", amount: 2219, source: "Instagram" },
@@ -145,6 +149,7 @@ const reports = [
       { month: "Agosto 2026", name: "Ubaldina Ramos", phone: "962237228", amount: 1900, source: "" },
       { month: "Agosto 2026", name: "Alfonso Labarthe", phone: "998191309", amount: 1900, source: "" },
       { month: "Agosto 2026", name: "Jackeline Neira", phone: "956593765", amount: 1900, source: "" },
+      { month: "Agosto 2026", name: "Alfonso Callaux", phone: "994180642", amount: 1900, source: "Form Meta" },
     ],
     manualSales: [],
   },
