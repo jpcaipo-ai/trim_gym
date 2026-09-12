@@ -260,6 +260,39 @@ const html = `<!doctype html>
     .impact-note.hidden {
       display: none;
     }
+    .impact-explainer {
+      margin: -2px 0 12px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 8px;
+    }
+    .impact-explainer.hidden {
+      display: none;
+    }
+    .impact-explainer-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fffaf3;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+    .impact-explainer-item b {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink);
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+    .impact-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
     .efficiency-panel {
       margin-top: 14px;
       display: grid;
@@ -847,6 +880,13 @@ const html = `<!doctype html>
         </div>
         <p class="impact-note" id="impactNote">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
+        <div class="impact-explainer" id="impactExplainer">
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>1era compra</b>Primer pago atribuido a Llama Leads.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente atribuido.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#6b4bb7"></span>Ajuste intro</b>S/ 900 faltante cuando el Intro aparece incompleto.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Rec. cartera previa</b>Compras de clientes atribuidos en meses anteriores.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#0f8b83"></span>Recompra mes</b>Compra posterior dentro del mismo mes de captación.</div>
+        </div>
         <div class="efficiency-panel" id="efficiencyPanel"></div>
       </div>
       <div class="panel wide">
@@ -2549,6 +2589,7 @@ const html = `<!doctype html>
       const rows = filteredRows();
       document.querySelector('#impactTitle').textContent = impactMode === 'ltv' ? 'Impacto Llama Leads mes a mes (LTV)' : 'Impacto Llama Leads mes a mes';
       document.querySelector('#impactNote')?.classList.toggle('hidden', impactMode === 'first');
+      document.querySelector('#impactExplainer')?.classList.toggle('hidden', impactMode === 'first');
       renderKpis(rows);
       renderCharts(rows);
       renderSedeCards(rows);
