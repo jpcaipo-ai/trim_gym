@@ -532,6 +532,7 @@
     }
     .chart-box { height: 330px; }
     .wide > .chart-box:not(.pipeline-box) { height: 390px; }
+    .chart-box.impact-box { height: 520px; }
     .chart-box.pipeline-box { height: 720px; }
     canvas { width: 100%; height: 100%; display: block; }
     .wide { grid-column: 1 / -1; }
@@ -864,7 +865,7 @@
           </div>
         </div>
         <p class="impact-note" id="impactNote">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
-        <div class="chart-box"><canvas id="attribChart"></canvas></div>
+        <div class="chart-box impact-box"><canvas id="attribChart"></canvas></div>
         <div class="impact-explainer" id="impactExplainer">
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>Intro</b>Primer pago del programa Trim Intro.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente captado.</div>
@@ -2203,6 +2204,11 @@
         top -= recPrevH; ctx.fillRect(x, top, bw, recPrevH);
         ctx.fillStyle = '#28706f';
         top -= recSameH; ctx.fillRect(x, top, bw, recSameH);
+        const compactMoney = value => {
+          const amount = Number(value || 0);
+          if (amount >= 1000) return 'S/ ' + Math.round(amount / 1000) + 'k';
+          return money(amount);
+        };
         const segmentLabels = [];
         let labelTop = h - pad.b;
         [
@@ -2220,32 +2226,24 @@
             segmentLabels.push({ value: segment.value, height: segment.height, center: labelTop + segment.height / 2 });
           }
         });
-        const externalLabels = [];
         segmentLabels.forEach(segment => {
-          if (segment.height >= 18) {
-            ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(money(segment.value), x + bw / 2, segment.center);
-          } else if (!tierMode) {
-            externalLabels.push(segment);
-          }
-        });
-        externalLabels.sort((a, b) => a.center - b.center);
-        externalLabels.forEach((segment, idx) => {
-          const drawRight = x + bw + 56 < w - pad.r;
-          const desired = segment.center;
-          const prev = idx ? externalLabels[idx - 1].labelY : pad.t - 12;
-          segment.labelY = Math.max(desired, prev + 12);
-          segment.labelY = Math.min(segment.labelY, h - pad.b - 8);
-          const lineStart = drawRight ? x + bw : x;
-          const lineEnd = drawRight ? x + bw + 6 : x - 6;
-          const textX = drawRight ? x + bw + 9 : x - 9;
-          ctx.strokeStyle = 'rgba(102,112,133,.45)';
-          ctx.beginPath(); ctx.moveTo(lineStart, segment.center); ctx.lineTo(lineEnd, segment.labelY); ctx.stroke();
-          ctx.fillStyle = '#475467';
-          ctx.font = '9px Segoe UI, Arial';
-          ctx.textAlign = drawRight ? 'left' : 'right';
+          ctx.fillStyle = '#fff';
+          ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(money(segment.value), textX, segment.labelY);
+          if (segment.height >= 18) {
+            ctx.font = '10px Segoe UI, Arial';
+            ctx.fillText(money(segment.value), x + bw / 2, segment.center);
+          } else if (segment.height >= 10) {
+            ctx.font = '8px Segoe UI, Arial';
+            ctx.fillText(compactMoney(segment.value), x + bw / 2, segment.center);
+          } else if (!tierMode && bw >= 24) {
+            ctx.save();
+            ctx.translate(x + bw / 2, segment.center);
+            ctx.rotate(-Math.PI / 2);
+            ctx.font = '7px Segoe UI, Arial';
+            ctx.fillText(compactMoney(segment.value), 0, 0);
+            ctx.restore();
+          }
         });
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle = '#172033';
