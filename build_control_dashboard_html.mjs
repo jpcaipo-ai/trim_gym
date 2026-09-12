@@ -884,7 +884,7 @@ const html = `<!doctype html>
         <div class="impact-explainer" id="impactExplainer">
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>1era compra</b>Primer pago con captación Llama Leads.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente captado.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#6b4bb7"></span>Ajuste intro</b>S/ 900 faltante cuando el Intro aparece incompleto.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#e0aa3e"></span>Ajuste intro</b>S/ 900 faltante cuando el Intro aparece incompleto.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Rec. cartera previa</b>Compras de clientes captados en meses anteriores.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#28706f"></span>Recompra mes</b>Compra posterior dentro del mismo mes de captación.</div>
         </div>
@@ -2207,7 +2207,7 @@ const html = `<!doctype html>
         top -= newH; ctx.fillRect(x, top, bw, newH);
         ctx.fillStyle = '#c58a00';
         top -= matH; ctx.fillRect(x, top, bw, matH);
-        ctx.fillStyle = '#6b4bb7';
+        ctx.fillStyle = '#e0aa3e';
         top -= adjH; ctx.fillRect(x, top, bw, adjH);
         ctx.fillStyle = '#2468d8';
         top -= ptH; ctx.fillRect(x, top, bw, ptH);
@@ -2276,7 +2276,7 @@ const html = `<!doctype html>
         ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText('Intro', pad.l + 16, 22);
         ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l + 70, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Matrícula', pad.l + 86, 22);
-        ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 160, 12, 11, 11);
+        ctx.fillStyle = '#e0aa3e'; ctx.fillRect(pad.l + 160, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Ajuste intro', pad.l + 176, 22);
         ctx.fillStyle = '#2468d8'; ctx.fillRect(pad.l + 270, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('PT', pad.l + 286, 22);
@@ -2306,7 +2306,7 @@ const html = `<!doctype html>
       if (!monthOnly && !detailMode) {
         ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l + 70, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Matrícula', pad.l + 86, 22);
-        ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 160, 12, 11, 11);
+        ctx.fillStyle = '#e0aa3e'; ctx.fillRect(pad.l + 160, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Ajuste intro', pad.l + 176, 22);
         ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 270, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Recompra previa', pad.l + 286, 22);
