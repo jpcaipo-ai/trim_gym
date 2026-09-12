@@ -242,6 +242,37 @@
       font-size: 12px;
       line-height: 1.35;
     }
+    .efficiency-panel {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: minmax(170px, .8fr) repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+    .efficiency-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf2;
+      padding: 11px 12px;
+      min-height: 82px;
+    }
+    .efficiency-card b {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 7px;
+    }
+    .efficiency-card strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .efficiency-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 7px;
+    }
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(130px, 1fr));
@@ -710,6 +741,7 @@
       .hero, .charts { grid-template-columns: 1fr; }
       .kpi-grid { grid-template-columns: repeat(2, minmax(130px, 1fr)); }
       .flow-card { grid-template-columns: 1fr 1fr; }
+      .efficiency-panel { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
     }
     @media (max-width: 720px) {
       header, main { padding-left: 14px; padding-right: 14px; }
@@ -717,6 +749,7 @@
       .brand-summary { grid-template-columns: 1fr; }
       .filters, .kpi-grid, .pipeline { grid-template-columns: 1fr; }
       .impact-summary { grid-template-columns: 1fr; }
+      .efficiency-panel { grid-template-columns: 1fr; }
       .counterfactual-card { grid-template-columns: 1fr; }
       .flow-card { grid-template-columns: 1fr; }
       h1 { font-size: 21px; }
@@ -796,6 +829,7 @@
         </div>
         <p class="impact-note">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
+        <div class="efficiency-panel" id="efficiencyPanel"></div>
       </div>
       <div class="panel wide">
         <div class="panel-title"><h2>Facturación total mes a mes</h2><span class="hint">nuevos, renovaciones, reinscripciones y matrículas</span></div>
@@ -893,6 +927,20 @@
       return [monthNames[month].slice(0, 3), year];
     };
     const historicalLeadSources2025 = ['Form free trial', 'Free trial', 'Referido lead', 'Form meta', 'Web', 'Instagram'];
+    const investmentByMonth = {
+      '2025-10': { ads: 2778.09, service: 5950, note: 'Oct-dic repartido proporcionalmente.' },
+      '2025-11': { ads: 2778.09, service: 5950, note: 'Oct-dic repartido proporcionalmente.' },
+      '2025-12': { ads: 2778.10, service: 5950, note: 'Oct-dic repartido proporcionalmente.' },
+      '2026-01': { ads: 3200, service: 4300, note: 'Ene-may repartido proporcionalmente.' },
+      '2026-02': { ads: 3200, service: 4300, note: 'Ene-may repartido proporcionalmente.' },
+      '2026-03': { ads: 3200, service: 4300, note: 'Ene-may repartido proporcionalmente.' },
+      '2026-04': { ads: 3200, service: 4300, note: 'Ene-may repartido proporcionalmente.' },
+      '2026-05': { ads: 3200, service: 4300, note: 'Ene-may repartido proporcionalmente.' },
+      '2026-06': { ads: 3923.69, service: 4318, note: 'Dato informado al 30/06 10:37 pm.' },
+      '2026-08': { ads: 3890, service: 4318, note: 'Pauta estimada desde CP etapa del pipeline.' }
+    };
+    const efficiencyMonths = [...new Set([...ventas.map(r => r.Mes), ...Object.keys(investmentByMonth)].filter(Boolean))].sort();
+    let efficiencyMonth = efficiencyMonths[efficiencyMonths.length - 1] || '';
     const lists = {
       sede: ['Todos', ...uniq(ventas.map(r => r.Sede)).sort()],
       year: ['Todos', ...uniq(ventas.map(r => String(r.Mes || '').slice(0, 4))).sort()],
@@ -1892,6 +1940,55 @@
       ctx.textAlign = 'right';
       ctx.fillText('solo facturacion sin Llama Leads', w - pad.r, 24);
     }
+    function metricPurchasesForMonth(mes) {
+      const q = norm(els.buscar.value);
+      return (METRICS.Compras || []).map(r => ({
+        ...r,
+        Mes: monthFromDateText(r.Inscripcion),
+        Cliente: r['Cliente Excel'] || r['Cliente captura'] || '',
+        Pago: Number(r.Pago || 0)
+      })).filter(r => {
+        if (r.Mes !== mes) return false;
+        if (els.sede.value !== 'Todos' && r.Sede !== els.sede.value) return false;
+        if (els.origen.value !== 'Todos' && r.Origen !== els.origen.value && r['Fuente captura'] !== els.origen.value) return false;
+        if (els.plan.value !== 'Todos' && r['Tipo plan'] !== els.plan.value) return false;
+        if (q && !norm([r.Cliente, r.DNI, r.Celular].join(' ')).includes(q)) return false;
+        return true;
+      });
+    }
+    function impactValueForMonth(mes, includeLtv) {
+      const acquisition = acquisitionMonthlyTotals(true)
+        .filter(r => r.key === mes)
+        .reduce((a, r) => a + Number(r.value || 0), 0);
+      if (!includeLtv) return acquisition;
+      const recurring = metricPurchasesForMonth(mes)
+        .filter(r => norm(r['Tipo plan']).includes('renov') && !norm(r['Tipo servicio']).includes('matr'))
+        .reduce((a, r) => a + Number(r.Pago || 0), 0);
+      return acquisition + recurring;
+    }
+    function renderEfficiencyPanel() {
+      const monthOptionsHtml = efficiencyMonths.map(m => '<option value="' + escapeHtml(m) + '"' + (m === efficiencyMonth ? ' selected' : '') + '>' + escapeHtml(captureMonthLabel(m) || m) + '</option>').join('');
+      const investment = investmentByMonth[efficiencyMonth] || { ads: 0, service: 0, note: 'Sin pauta cargada para este mes.' };
+      const ads = Number(investment.ads || 0);
+      const service = Number(investment.service || 0);
+      const totalInvestment = ads + service;
+      const monthRows = ventas.filter(r => r.Mes === efficiencyMonth && (els.sede.value === 'Todos' || r.Sede === els.sede.value));
+      const totalBilling = monthRows.reduce((a, r) => a + Number(r.Pago || 0), 0);
+      const impact = impactValueForMonth(efficiencyMonth, impactMode === 'ltv');
+      const roas = ads ? impact / ads : null;
+      const mer = ads ? totalBilling / ads : null;
+      document.querySelector('#efficiencyPanel').innerHTML =
+        '<div class="efficiency-card"><b>Mes inversión</b><select id="efficiencyMonth">' + monthOptionsHtml + '</select><span>' + escapeHtml(investment.note || '') + '</span></div>' +
+        '<div class="efficiency-card"><b>Inversión total</b><strong>' + (totalInvestment ? money(totalInvestment) : 'Sin dato') + '</strong><span>Pauta + servicio</span></div>' +
+        '<div class="efficiency-card"><b>Pauta</b><strong>' + (ads ? money(ads) : 'Sin dato') + '</strong><span>Base para ROAS y MER</span></div>' +
+        '<div class="efficiency-card"><b>Impacto Llama</b><strong>' + money(impact) + '</strong><span>' + (impactMode === 'ltv' ? 'Vista LTV' : 'Vista 1era compra') + '</span></div>' +
+        '<div class="efficiency-card"><b>ROAS</b><strong>' + (roas == null ? 'Sin dato' : roas.toFixed(1) + 'x') + '</strong><span>Impacto Llama / pauta</span></div>' +
+        '<div class="efficiency-card"><b>MER</b><strong>' + (mer == null ? 'Sin dato' : mer.toFixed(1) + 'x') + '</strong><span>Facturación total / pauta</span></div>';
+      document.querySelector('#efficiencyMonth')?.addEventListener('input', event => {
+        efficiencyMonth = event.target.value;
+        update();
+      });
+    }
     function firstPurchaseType(value) {
       const amount = Number(value || 0);
       if (amount >= 1950) return 'pt';
@@ -2329,6 +2426,7 @@
         if (r['Atribuido agencia'] === 'Si') s.attrib += Number(r.Pago || 0);
       }).sort((a, b) => a.key.localeCompare(b.key));
       attributedComboChart('#attribChart', rows);
+      renderEfficiencyPanel();
       totalBillingStackedChart('#salesChart', rows);
       noLlamaScenarioChart('#noLlamaChart', rows);
       const source = group(rows, r => r.Origen || 'Sin origen', (r, key) => ({ key, sale: 0 }), (s, r) => { s.sale += Number(r.Pago || 0); }).sort((a, b) => b.sale - a.sale).slice(0, 8);
