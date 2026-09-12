@@ -882,11 +882,9 @@ const html = `<!doctype html>
         <p class="impact-note" id="impactNote">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
         <div class="chart-box impact-box"><canvas id="attribChart"></canvas></div>
         <div class="impact-explainer" id="impactExplainer">
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>Intro</b>Primer pago del programa Trim Intro.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>1era compra</b>Primer pago con captación Llama Leads.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente captado.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#6b4bb7"></span>Ajuste intro</b>S/ 900 faltante cuando el Intro aparece incompleto.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#2468d8"></span>PT</b>Primera compra de Personal Training.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#0f8b83"></span>Semi</b>Primera compra de Semi personalizado.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Rec. cartera previa</b>Compras de clientes captados en meses anteriores.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#28706f"></span>Recompra mes</b>Compra posterior dentro del mismo mes de captación.</div>
         </div>
@@ -2123,7 +2121,7 @@ const html = `<!doctype html>
     }
     function attributedComboChart(id, rows) {
       const monthOnly = impactMode === 'first';
-      const detailMode = els.impactDetail.value === 'Detalle por tipo';
+      const detailMode = monthOnly && els.impactDetail.value === 'Detalle por tipo';
       const tierMode = monthOnly && !detailMode;
       const acq = acquisitionMonthlyTotals(false);
       const actual = group(rows.filter(r => r['Atribuido agencia'] === 'Si'), r => r.Mes, (r, key) => ({ key, actual: 0 }), (s, r) => {
@@ -2634,6 +2632,8 @@ const html = `<!doctype html>
     function update() {
       const rows = filteredRows();
       document.querySelector('#impactTitle').textContent = impactMode === 'ltv' ? 'Impacto Llama Leads mes a mes (LTV)' : 'Impacto Llama Leads mes a mes';
+      if (impactMode === 'ltv') els.impactDetail.value = 'Bloque total';
+      els.impactDetail.disabled = impactMode === 'ltv';
       document.querySelector('#impactNote')?.classList.toggle('hidden', impactMode === 'first');
       document.querySelector('#impactExplainer')?.classList.toggle('hidden', impactMode === 'first');
       renderKpis(rows);
