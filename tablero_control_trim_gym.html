@@ -236,6 +236,12 @@
       background: #111;
       color: #fff;
     }
+    .impact-note {
+      margin: -4px 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(130px, 1fr));
@@ -777,15 +783,18 @@
     <section class="charts">
       <div class="panel wide">
         <div class="panel-title">
-          <h2>Impacto real Llama Leads mes a mes</h2>
+          <h2>Impacto real Llama Leads mes a mes (LTV)</h2>
           <div class="panel-actions">
             <label>Vista</label>
             <div class="chart-tabs" role="tablist" aria-label="Vista impacto Llama Leads">
               <button class="chart-tab active" type="button" data-impact-mode="ltv" aria-selected="true">LTV acumulado</button>
               <button class="chart-tab" type="button" data-impact-mode="first" aria-selected="false">1era compra</button>
             </div>
+            <label for="impactDetail">Detalle</label>
+            <select id="impactDetail"></select>
           </div>
         </div>
+        <p class="impact-note">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
       </div>
       <div class="panel wide">
@@ -863,6 +872,7 @@
       plan: document.querySelector('#plan'),
       llama: document.querySelector('#llama'),
       matricula: document.querySelector('#matricula'),
+      impactDetail: document.querySelector('#impactDetail'),
       buscar: document.querySelector('#buscar')
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
@@ -885,9 +895,10 @@
       origen: ['Todos', ...uniq([...ventas.map(r => r.Origen), ...historicalLeadSources2025, 'Matrícula atribuida', 'Ajuste Trim Intro']).sort()],
       plan: ['Todos', ...uniq(ventas.map(r => r['Tipo plan'])).sort()],
       llama: ['Todos', 'Solo Llama Leads', 'Sin Llama Leads'],
-      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula']
+      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula'],
+      impactDetail: ['Bloque total', 'Detalle por tipo']
     };
-    for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula']) {
+    for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula', 'impactDetail']) {
       els[key].innerHTML = lists[key].map(v => '<option>' + escapeHtml(v) + '</option>').join('');
     }
     let impactMode = 'ltv';
@@ -1876,8 +1887,55 @@
       ctx.textAlign = 'right';
       ctx.fillText('solo facturacion sin Llama Leads', w - pad.r, 24);
     }
+    function firstPurchaseType(value) {
+      const amount = Number(value || 0);
+      if (amount >= 1950) return 'pt';
+      if (amount >= 1800) return 'intro';
+      return 'semi';
+    }
+    function firstPurchaseTypeMonthlyTotals(acqTotals) {
+      const raw = group(acquisitionRows(false), r => r.Sede + '|' + r.Mes, (r, key) => ({
+        key,
+        sede: r.Sede,
+        mes: r.Mes,
+        intro: 0,
+        pt: 0,
+        semi: 0
+      }), (s, r) => {
+        const amount = Number(r.Base || 0);
+        const type = firstPurchaseType(amount);
+        s[type] += type === 'intro' ? Math.max(0, amount - 900) : amount;
+      });
+      const rawMap = new Map(raw.map(r => [r.key, r]));
+      const byMonth = group(acqTotals, r => r.sede + '|' + r.key, (r, key) => ({
+        key,
+        mes: r.key,
+        combo: 0,
+        intro: 0,
+        pt: 0,
+        semi: 0
+      }), (s, r) => {
+        const rawRow = rawMap.get(r.sede + '|' + r.key) || { intro: 0, pt: 0, semi: 0 };
+        const rawTotal = rawRow.intro + rawRow.pt + rawRow.semi;
+        const nuevosTotal = Number(r.nuevos || 0);
+        const scale = rawTotal ? nuevosTotal / rawTotal : 1;
+        s.combo += Number(r.matricula || 0) + Number(r.ajusteIntro || 0);
+        s.intro += rawTotal ? rawRow.intro * scale : nuevosTotal;
+        s.pt += rawRow.pt * scale;
+        s.semi += rawRow.semi * scale;
+      });
+      return byMonth.map(r => ({
+        key: r.mes,
+        combo: r.combo,
+        intro: r.intro,
+        pt: r.pt,
+        semi: r.semi,
+        total: r.combo + r.intro + r.pt + r.semi
+      })).sort((a, b) => a.key.localeCompare(b.key));
+    }
     function attributedComboChart(id, rows) {
       const monthOnly = impactMode === 'first';
+      const detailMode = monthOnly && els.impactDetail.value === 'Detalle por tipo';
       const acq = acquisitionMonthlyTotals(false);
       const actual = group(rows.filter(r => r['Atribuido agencia'] === 'Si'), r => r.Mes, (r, key) => ({ key, actual: 0 }), (s, r) => {
         s.actual += Number(r.Pago || 0);
@@ -1910,17 +1968,20 @@
         const recurrenteSame = recRow.recurrenteSame || 0;
         return { key, nuevos, matricula, ajusteIntro, recurrentePrev, recurrenteSame, total: nuevos + matricula + ajusteIntro + recurrentePrev + recurrenteSame };
       });
-      const labels = months.map(r => r.key);
-      const totals = months.map(r => r.total);
-      const nuevos = months.map(r => r.nuevos);
-      const matriculas = months.map(r => r.matricula);
-      const ajustesIntro = months.map(r => r.ajusteIntro);
-      const recurrentesPrev = months.map(r => r.recurrentePrev);
-      const recurrentesSame = months.map(r => r.recurrenteSame);
+      const displayMonths = detailMode ? firstPurchaseTypeMonthlyTotals(acq) : months;
+      const labels = displayMonths.map(r => r.key);
+      const totals = displayMonths.map(r => r.total);
+      const nuevos = displayMonths.map(r => monthOnly ? (detailMode ? 0 : r.total) : r.nuevos);
+      const matriculas = displayMonths.map(r => detailMode ? r.combo : (monthOnly ? 0 : r.matricula));
+      const ajustesIntro = displayMonths.map(r => detailMode ? r.intro : (monthOnly ? 0 : r.ajusteIntro));
+      const pts = displayMonths.map(r => detailMode ? r.pt : 0);
+      const semis = displayMonths.map(r => detailMode ? r.semi : 0);
+      const recurrentesPrev = displayMonths.map(r => monthOnly ? 0 : r.recurrentePrev);
+      const recurrentesSame = displayMonths.map(r => monthOnly ? 0 : r.recurrenteSame);
       const { ctx, w, h } = canvasCtx(id);
       ctx.clearRect(0, 0, w, h);
       const pad = { l: 58, r: 24, t: 42, b: 64 };
-      const max = Math.max(...totals, ...nuevos, ...matriculas, ...ajustesIntro, ...recurrentesPrev, ...recurrentesSame, 1);
+      const max = Math.max(...totals, ...nuevos, ...matriculas, ...ajustesIntro, ...pts, ...semis, ...recurrentesPrev, ...recurrentesSame, 1);
       ctx.strokeStyle = '#d7dee9';
       ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
       const slot = (w - pad.l - pad.r) / Math.max(labels.length, 1);
@@ -1929,21 +1990,28 @@
         const newH = (h - pad.t - pad.b) * nuevos[i] / max;
         const matH = (h - pad.t - pad.b) * matriculas[i] / max;
         const adjH = (h - pad.t - pad.b) * ajustesIntro[i] / max;
+        const ptH = (h - pad.t - pad.b) * pts[i] / max;
+        const semiH = (h - pad.t - pad.b) * semis[i] / max;
         const recPrevH = (h - pad.t - pad.b) * recurrentesPrev[i] / max;
         const recSameH = (h - pad.t - pad.b) * recurrentesSame[i] / max;
-        const bh = newH + matH + adjH + recPrevH + recSameH;
+        const bh = newH + matH + adjH + ptH + semiH + recPrevH + recSameH;
         const x = pad.l + i * slot + (slot - bw) / 2;
         const y = h - pad.b - bh;
+        let top = h - pad.b;
         ctx.fillStyle = '#1f8a4c';
-        ctx.fillRect(x, h - pad.b - newH, bw, newH);
+        top -= newH; ctx.fillRect(x, top, bw, newH);
         ctx.fillStyle = '#c58a00';
-        ctx.fillRect(x, h - pad.b - newH - matH, bw, matH);
+        top -= matH; ctx.fillRect(x, top, bw, matH);
         ctx.fillStyle = '#6b4bb7';
-        ctx.fillRect(x, h - pad.b - newH - matH - adjH, bw, adjH);
-        ctx.fillStyle = '#c44545';
-        ctx.fillRect(x, h - pad.b - newH - matH - adjH - recPrevH, bw, recPrevH);
+        top -= adjH; ctx.fillRect(x, top, bw, adjH);
+        ctx.fillStyle = '#2468d8';
+        top -= ptH; ctx.fillRect(x, top, bw, ptH);
         ctx.fillStyle = '#0f8b83';
-        ctx.fillRect(x, h - pad.b - newH - matH - adjH - recPrevH - recSameH, bw, recSameH);
+        top -= semiH; ctx.fillRect(x, top, bw, semiH);
+        ctx.fillStyle = '#c44545';
+        top -= recPrevH; ctx.fillRect(x, top, bw, recPrevH);
+        ctx.fillStyle = '#0f8b83';
+        top -= recSameH; ctx.fillRect(x, top, bw, recSameH);
         if (newH > 22) {
           ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
           ctx.fillText(money(nuevos[i]), x + bw / 2, h - pad.b - newH / 2 + 4);
@@ -1955,6 +2023,14 @@
         if (adjH > 22) {
           ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
           ctx.fillText(money(ajustesIntro[i]), x + bw / 2, h - pad.b - newH - matH - adjH / 2 + 4);
+        }
+        if (ptH > 22) {
+          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
+          ctx.fillText(money(pts[i]), x + bw / 2, h - pad.b - newH - matH - adjH - ptH / 2 + 4);
+        }
+        if (semiH > 22) {
+          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
+          ctx.fillText(money(semis[i]), x + bw / 2, h - pad.b - newH - matH - adjH - ptH - semiH / 2 + 4);
         }
         if (recPrevH > 22) {
           ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
@@ -1971,13 +2047,24 @@
         ctx.save(); ctx.translate(x + bw / 2, h - 16); ctx.rotate(-Math.PI / 4);
         ctx.fillStyle = '#667085'; ctx.textAlign = 'right'; ctx.fillText(shortMonthLabel(label), 0, 0); ctx.restore();
       });
-      ctx.fillStyle = '#1f8a4c'; ctx.fillRect(pad.l, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText('1era compra', pad.l + 16, 22);
-      ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l + 132, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.fillText('Matrícula Intro', pad.l + 148, 22);
-      ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 230, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.fillText('Ajuste S/900', pad.l + 246, 22);
+      if (detailMode) {
+        ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText('Matrícula + ajuste intro', pad.l + 16, 22);
+        ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 172, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Intro', pad.l + 188, 22);
+        ctx.fillStyle = '#2468d8'; ctx.fillRect(pad.l + 226, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('1era compra PT', pad.l + 242, 22);
+        ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 350, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('1era compra Semi', pad.l + 366, 22);
+      } else {
+        ctx.fillStyle = '#1f8a4c'; ctx.fillRect(pad.l, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText(monthOnly ? '1era compra total' : '1era compra', pad.l + 16, 22);
+      }
       if (!monthOnly) {
+        ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l + 132, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Matrícula', pad.l + 148, 22);
+        ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 230, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Ajuste intro', pad.l + 246, 22);
         ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 340, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Recompra previa', pad.l + 356, 22);
         ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 488, 12, 11, 11);
