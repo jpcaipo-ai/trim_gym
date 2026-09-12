@@ -210,6 +210,24 @@ const html = `<!doctype html>
       line-height: 1.2;
     }
     .hint { color: var(--muted); font-size: 12px; }
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .panel-actions label {
+      margin: 0;
+      font-size: 10px;
+    }
+    .panel-actions select {
+      width: auto;
+      min-width: 190px;
+      height: 32px;
+      background: #fff;
+      font-size: 12px;
+    }
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(130px, 1fr));
@@ -750,7 +768,13 @@ const html = `<!doctype html>
     </section>
     <section class="charts">
       <div class="panel wide">
-        <div class="panel-title"><h2>Impacto real Llama Leads mes a mes</h2><span class="hint">monto generado por clientes de la agencia</span></div>
+        <div class="panel-title">
+          <h2>Impacto real Llama Leads mes a mes</h2>
+          <div class="panel-actions">
+            <label for="impactMode">Vista</label>
+            <select id="impactMode"></select>
+          </div>
+        </div>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
       </div>
       <div class="panel wide">
@@ -828,6 +852,7 @@ const html = `<!doctype html>
       plan: document.querySelector('#plan'),
       llama: document.querySelector('#llama'),
       matricula: document.querySelector('#matricula'),
+      impactMode: document.querySelector('#impactMode'),
       buscar: document.querySelector('#buscar')
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
@@ -845,9 +870,10 @@ const html = `<!doctype html>
       origen: ['Todos', ...uniq([...ventas.map(r => r.Origen), ...historicalLeadSources2025, 'Matrícula atribuida', 'Ajuste Trim Intro']).sort()],
       plan: ['Todos', ...uniq(ventas.map(r => r['Tipo plan'])).sort()],
       llama: ['Todos', 'Solo Llama Leads', 'Sin Llama Leads'],
-      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula']
+      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula'],
+      impactMode: ['Impacto total Llama', 'Solo nuevos del mes']
     };
-    for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula']) {
+    for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula', 'impactMode']) {
       els[key].innerHTML = lists[key].map(v => '<option>' + escapeHtml(v) + '</option>').join('');
     }
     function monthFromCapture(label) {
@@ -1836,6 +1862,7 @@ const html = `<!doctype html>
       ctx.fillText('solo facturacion sin Llama Leads', w - pad.r, 24);
     }
     function attributedComboChart(id, rows) {
+      const monthOnly = els.impactMode.value === 'Solo nuevos del mes';
       const acq = acquisitionMonthlyTotals(false);
       const actual = group(rows.filter(r => r['Atribuido agencia'] === 'Si'), r => r.Mes, (r, key) => ({ key, actual: 0 }), (s, r) => {
         s.actual += Number(r.Pago || 0);
@@ -1855,7 +1882,7 @@ const html = `<!doctype html>
         s.matricula += Number(r.matricula || 0);
         s.ajusteIntro = (s.ajusteIntro || 0) + Number(r.ajusteIntro || 0);
       });
-      const monthKeys = [...new Set([...acqByMonth.map(r => r.key), ...actual.map(r => r.key), ...recurrent.map(r => r.key)])].sort();
+      const monthKeys = [...new Set(monthOnly ? acqByMonth.map(r => r.key) : [...acqByMonth.map(r => r.key), ...actual.map(r => r.key), ...recurrent.map(r => r.key)])].sort();
       const acqMap = new Map(acqByMonth.map(r => [r.key, r]));
       const recurrentMap = new Map(recurrent.map(r => [r.key, r]));
       const months = monthKeys.map(key => {
@@ -1863,7 +1890,7 @@ const html = `<!doctype html>
         const nuevos = acqRow.nuevos || 0;
         const matricula = acqRow.matricula || 0;
         const ajusteIntro = acqRow.ajusteIntro || 0;
-        const recRow = recurrentMap.get(key) || { recurrentePrev: 0, recurrenteSame: 0 };
+        const recRow = monthOnly ? { recurrentePrev: 0, recurrenteSame: 0 } : recurrentMap.get(key) || { recurrentePrev: 0, recurrenteSame: 0 };
         const recurrentePrev = recRow.recurrentePrev || 0;
         const recurrenteSame = recRow.recurrenteSame || 0;
         return { key, nuevos, matricula, ajusteIntro, recurrentePrev, recurrenteSame, total: nuevos + matricula + ajusteIntro + recurrentePrev + recurrenteSame };
@@ -1935,10 +1962,12 @@ const html = `<!doctype html>
       ctx.fillStyle = '#334155'; ctx.fillText('Matrícula', pad.l + 148, 22);
       ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 230, 12, 11, 11);
       ctx.fillStyle = '#334155'; ctx.fillText('Ajuste Intro', pad.l + 246, 22);
-      ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 340, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.fillText('Rec. cartera previa', pad.l + 356, 22);
-      ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 488, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.fillText('Recompra mes', pad.l + 504, 22);
+      if (!monthOnly) {
+        ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 340, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Rec. cartera previa', pad.l + 356, 22);
+        ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 488, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra mes', pad.l + 504, 22);
+      }
     }
     function donutChart(id, labels, values) {
       const { ctx, w, h } = canvasCtx(id);
