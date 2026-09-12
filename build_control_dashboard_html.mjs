@@ -547,7 +547,7 @@ const html = `<!doctype html>
     }
     .chart-box { height: 330px; }
     .wide > .chart-box:not(.pipeline-box) { height: 390px; }
-    .chart-box.impact-box { height: 520px; }
+    .chart-box.impact-box { height: 640px; }
     .chart-box.pipeline-box { height: 720px; }
     canvas { width: 100%; height: 100%; display: block; }
     .wide { grid-column: 1 / -1; }
@@ -885,8 +885,7 @@ const html = `<!doctype html>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>1era compra</b>Primer pago con captación Llama Leads.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente captado.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#e0aa3e"></span>Ajuste intro</b>S/ 900 faltante cuando el Intro aparece incompleto.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Rec. cartera previa</b>Compras de clientes captados en meses anteriores.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#28706f"></span>Recompra mes</b>Compra posterior dentro del mismo mes de captación.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Recompra</b>Compras posteriores de clientes captados por Llama Leads.</div>
         </div>
         <div class="efficiency-panel" id="efficiencyPanel"></div>
       </div>
@@ -2144,7 +2143,9 @@ const html = `<!doctype html>
         s.ajusteIntro += Number(r.ajusteIntro || 0);
       });
       const acqSource = detailMode ? acqByTypeMonth : acqByMonth;
-      const monthKeys = [...new Set(monthOnly ? acqSource.map(r => r.key) : [...acqSource.map(r => r.key), ...actual.map(r => r.key), ...recurrent.map(r => r.key)])].sort();
+      const monthKeys = [...new Set(monthOnly ? acqSource.map(r => r.key) : [...acqSource.map(r => r.key), ...actual.map(r => r.key), ...recurrent.map(r => r.key)])]
+        .filter(key => key >= '2025-10')
+        .sort();
       const acqMap = new Map(acqSource.map(r => [r.key, r]));
       const recurrentMap = new Map(recurrent.map(r => [r.key, r]));
       const months = monthKeys.map(key => {
@@ -2155,8 +2156,10 @@ const html = `<!doctype html>
         const pt = detailMode ? (acqRow.pt || 0) : 0;
         const semi = detailMode ? (acqRow.semi || 0) : 0;
         const recRow = monthOnly ? { recurrentePrev: 0, recurrenteSame: 0 } : recurrentMap.get(key) || { recurrentePrev: 0, recurrenteSame: 0 };
-        const recurrentePrev = recRow.recurrentePrev || 0;
-        const recurrenteSame = recRow.recurrenteSame || 0;
+        const recurrentePrevRaw = recRow.recurrentePrev || 0;
+        const recurrenteSameRaw = recRow.recurrenteSame || 0;
+        const recurrentePrev = monthOnly ? 0 : recurrentePrevRaw + recurrenteSameRaw;
+        const recurrenteSame = 0;
         return { key, intro, matricula, ajusteIntro, pt, semi, recurrentePrev, recurrenteSame, total: intro + matricula + ajusteIntro + pt + semi + recurrentePrev + recurrenteSame };
       });
       const displayMonths = months;
@@ -2192,13 +2195,23 @@ const html = `<!doctype html>
       const slot = (w - pad.l - pad.r) / Math.max(labels.length, 1);
       const bw = Math.max(16, slot * .54);
       labels.forEach((label, i) => {
-        const newH = (h - pad.t - pad.b) * nuevos[i] / max;
-        const matH = (h - pad.t - pad.b) * matriculas[i] / max;
-        const adjH = (h - pad.t - pad.b) * ajustesIntro[i] / max;
-        const ptH = (h - pad.t - pad.b) * pts[i] / max;
-        const semiH = (h - pad.t - pad.b) * semis[i] / max;
-        const recPrevH = (h - pad.t - pad.b) * recurrentesPrev[i] / max;
-        const recSameH = (h - pad.t - pad.b) * recurrentesSame[i] / max;
+        const plotH = h - pad.t - pad.b;
+        const rawNewH = plotH * nuevos[i] / max;
+        const rawMatH = plotH * matriculas[i] / max;
+        const rawAdjH = plotH * ajustesIntro[i] / max;
+        const rawPtH = plotH * pts[i] / max;
+        const rawSemiH = plotH * semis[i] / max;
+        const rawRecPrevH = plotH * recurrentesPrev[i] / max;
+        const rawRecSameH = plotH * recurrentesSame[i] / max;
+        const minSegmentH = tierMode ? 0 : 18;
+        const segmentH = (value, height) => value > 0 && height > 0 ? Math.max(height, minSegmentH) : 0;
+        const newH = segmentH(nuevos[i], rawNewH);
+        const matH = segmentH(matriculas[i], rawMatH);
+        const adjH = segmentH(ajustesIntro[i], rawAdjH);
+        const ptH = segmentH(pts[i], rawPtH);
+        const semiH = segmentH(semis[i], rawSemiH);
+        const recPrevH = segmentH(recurrentesPrev[i], rawRecPrevH);
+        const recSameH = segmentH(recurrentesSame[i], rawRecSameH);
         const bh = newH + matH + adjH + ptH + semiH + recPrevH + recSameH;
         const x = pad.l + i * slot + (slot - bw) / 2;
         const y = h - pad.b - bh;
@@ -2243,20 +2256,8 @@ const html = `<!doctype html>
           ctx.fillStyle = '#fff';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          if (segment.height >= 18) {
-            ctx.font = '10px Segoe UI, Arial';
-            ctx.fillText(money(segment.value), x + bw / 2, segment.center);
-          } else if (segment.height >= 10) {
-            ctx.font = '8px Segoe UI, Arial';
-            ctx.fillText(compactMoney(segment.value), x + bw / 2, segment.center);
-          } else if (!tierMode && bw >= 24) {
-            ctx.save();
-            ctx.translate(x + bw / 2, segment.center);
-            ctx.rotate(-Math.PI / 2);
-            ctx.font = '7px Segoe UI, Arial';
-            ctx.fillText(compactMoney(segment.value), 0, 0);
-            ctx.restore();
-          }
+          ctx.font = '10px Segoe UI, Arial';
+          ctx.fillText(segment.height >= 18 ? money(segment.value) : compactMoney(segment.value), x + bw / 2, segment.center);
         });
         ctx.textBaseline = 'alphabetic';
         ctx.fillStyle = '#172033';
@@ -2309,15 +2310,11 @@ const html = `<!doctype html>
         ctx.fillStyle = '#e0aa3e'; ctx.fillRect(pad.l + 160, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Ajuste intro', pad.l + 176, 22);
         ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 270, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Recompra previa', pad.l + 286, 22);
-        ctx.fillStyle = '#28706f'; ctx.fillRect(pad.l + 414, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Recompra mismo mes', pad.l + 430, 22);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra', pad.l + 286, 22);
       }
       if (!monthOnly && detailMode) {
         ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 380, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Rec. cartera previa', pad.l + 396, 22);
-        ctx.fillStyle = '#28706f'; ctx.fillRect(pad.l + 528, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Recompra mes', pad.l + 544, 22);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra', pad.l + 396, 22);
       }
     }
     function donutChart(id, labels, values) {
