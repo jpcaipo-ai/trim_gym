@@ -2077,8 +2077,8 @@ const html = `<!doctype html>
         s[type] += type === 'intro' ? Math.max(0, amount - 900) : amount;
       });
       const rawMap = new Map(raw.map(r => [r.key, r]));
-      const byMonth = group(acqTotals, r => r.sede + '|' + r.key, (r, key) => ({
-        key,
+      const bySedeMonth = group(acqTotals, r => r.sede + '|' + r.key, (r, key) => ({
+        key: r.key,
         mes: r.key,
         matricula: 0,
         ajusteIntro: 0,
@@ -2096,8 +2096,22 @@ const html = `<!doctype html>
         s.pt += rawRow.pt * scale;
         s.semi += rawRow.semi * scale;
       });
+      const byMonth = group(bySedeMonth, r => r.mes, (r, key) => ({
+        key,
+        matricula: 0,
+        ajusteIntro: 0,
+        intro: 0,
+        pt: 0,
+        semi: 0
+      }), (s, r) => {
+        s.matricula += Number(r.matricula || 0);
+        s.ajusteIntro += Number(r.ajusteIntro || 0);
+        s.intro += Number(r.intro || 0);
+        s.pt += Number(r.pt || 0);
+        s.semi += Number(r.semi || 0);
+      });
       return byMonth.map(r => ({
-        key: r.mes,
+        key: r.key,
         matricula: r.matricula,
         ajusteIntro: r.ajusteIntro,
         intro: r.intro,
@@ -2108,7 +2122,8 @@ const html = `<!doctype html>
     }
     function attributedComboChart(id, rows) {
       const monthOnly = impactMode === 'first';
-      const detailMode = monthOnly && els.impactDetail.value === 'Detalle por tipo';
+      const detailMode = els.impactDetail.value === 'Detalle por tipo';
+      const tierMode = monthOnly && !detailMode;
       const acq = acquisitionMonthlyTotals(false);
       const actual = group(rows.filter(r => r['Atribuido agencia'] === 'Si'), r => r.Mes, (r, key) => ({ key, actual: 0 }), (s, r) => {
         s.actual += Number(r.Pago || 0);
@@ -2124,23 +2139,28 @@ const html = `<!doctype html>
         else s.recurrentePrev += Number(r.Pago || 0);
       });
       const acqByTypeMonth = firstPurchaseTypeMonthlyTotals(acq);
-      const monthKeys = [...new Set(monthOnly ? acqByTypeMonth.map(r => r.key) : [...acqByTypeMonth.map(r => r.key), ...actual.map(r => r.key), ...recurrent.map(r => r.key)])].sort();
-      const acqMap = new Map(acqByTypeMonth.map(r => [r.key, r]));
+      const acqByMonth = group(acq, r => r.key, (r, key) => ({ key, nuevos: 0, matricula: 0, ajusteIntro: 0 }), (s, r) => {
+        s.nuevos += Number(r.nuevos || 0);
+        s.matricula += Number(r.matricula || 0);
+        s.ajusteIntro += Number(r.ajusteIntro || 0);
+      });
+      const acqSource = detailMode ? acqByTypeMonth : acqByMonth;
+      const monthKeys = [...new Set(monthOnly ? acqSource.map(r => r.key) : [...acqSource.map(r => r.key), ...actual.map(r => r.key), ...recurrent.map(r => r.key)])].sort();
+      const acqMap = new Map(acqSource.map(r => [r.key, r]));
       const recurrentMap = new Map(recurrent.map(r => [r.key, r]));
       const months = monthKeys.map(key => {
-        const acqRow = acqMap.get(key) || { intro: 0, matricula: 0, ajusteIntro: 0, pt: 0, semi: 0 };
-        const intro = acqRow.intro || 0;
+        const acqRow = acqMap.get(key) || { nuevos: 0, intro: 0, matricula: 0, ajusteIntro: 0, pt: 0, semi: 0 };
+        const intro = detailMode ? (acqRow.intro || 0) : (acqRow.nuevos || 0);
         const matricula = acqRow.matricula || 0;
         const ajusteIntro = acqRow.ajusteIntro || 0;
-        const pt = acqRow.pt || 0;
-        const semi = acqRow.semi || 0;
+        const pt = detailMode ? (acqRow.pt || 0) : 0;
+        const semi = detailMode ? (acqRow.semi || 0) : 0;
         const recRow = monthOnly ? { recurrentePrev: 0, recurrenteSame: 0 } : recurrentMap.get(key) || { recurrentePrev: 0, recurrenteSame: 0 };
         const recurrentePrev = recRow.recurrentePrev || 0;
         const recurrenteSame = recRow.recurrenteSame || 0;
         return { key, intro, matricula, ajusteIntro, pt, semi, recurrentePrev, recurrenteSame, total: intro + matricula + ajusteIntro + pt + semi + recurrentePrev + recurrenteSame };
       });
       const displayMonths = months;
-      const tierMode = monthOnly && !detailMode;
       const labels = displayMonths.map(r => r.key);
       const totals = displayMonths.map(r => r.total);
       const nuevos = displayMonths.map(r => tierMode ? r.total : r.intro);
@@ -2285,17 +2305,19 @@ const html = `<!doctype html>
         });
       } else {
         ctx.fillStyle = '#1f8a4c'; ctx.fillRect(pad.l, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText(monthOnly ? '1era compra total' : 'Intro', pad.l + 16, 22);
+        ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText(monthOnly ? '1era compra total' : '1era compra', pad.l + 16, 22);
       }
-      if (!monthOnly) {
+      if (!monthOnly && !detailMode) {
         ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l + 70, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Matrícula', pad.l + 86, 22);
         ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 160, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Ajuste intro', pad.l + 176, 22);
-        ctx.fillStyle = '#2468d8'; ctx.fillRect(pad.l + 270, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('PT', pad.l + 286, 22);
-        ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 324, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Semi', pad.l + 340, 22);
+        ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 270, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra previa', pad.l + 286, 22);
+        ctx.fillStyle = '#28706f'; ctx.fillRect(pad.l + 414, 12, 11, 11);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra mismo mes', pad.l + 430, 22);
+      }
+      if (!monthOnly && detailMode) {
         ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 380, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('Rec. cartera previa', pad.l + 396, 22);
         ctx.fillStyle = '#28706f'; ctx.fillRect(pad.l + 528, 12, 11, 11);
