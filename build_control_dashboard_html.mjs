@@ -1007,7 +1007,7 @@ const html = `<!doctype html>
       origen: ['Todos', ...uniq([...ventas.map(r => r.Origen), ...historicalLeadSources2025, 'Matrícula captación LL', 'Ajuste Trim Intro']).sort()],
       plan: ['Todos', ...uniq(ventas.map(r => r['Tipo plan'])).sort()],
       llama: ['Todos', 'Solo Llama Leads', 'Sin Llama Leads'],
-      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula'],
+      matricula: ['(Todos)', 'Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula'],
       impactDetail: ['Bloque total', 'Detalle por tipo']
     };
     for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula', 'impactDetail']) {
