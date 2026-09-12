@@ -813,7 +813,7 @@ const html = `<!doctype html>
       <div>
         <div class="brand-kicker">TRIM GYM BOUTIQUE</div>
         <h1>Trim Gym | Tablero Comercial</h1>
-        <div class="sub">Venta total, venta atribuida, pipeline de clientes generados y avance mensual</div>
+        <div class="sub">Venta total, captación Llama Leads, pipeline de clientes generados y avance mensual</div>
       </div>
       <div class="badge">Corte 30/06/2026</div>
     </div>
@@ -833,7 +833,7 @@ const html = `<!doctype html>
     <section class="brand-summary">
       <div class="brand-statement">
         <b>Trim Gym Boutique x Llama Leads</b>
-        <strong>Fuerza comercial, recompra y venta atribuida en un solo tablero ejecutivo.</strong>
+        <strong>Fuerza comercial, recompra y ventas con captación Llama Leads en un solo tablero ejecutivo.</strong>
       </div>
       <div class="summary-chip">
         <b>Venta junio 3 sedes</b>
@@ -882,11 +882,11 @@ const html = `<!doctype html>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
         <div class="impact-explainer" id="impactExplainer">
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#1f8a4c"></span>Intro</b>Primer pago del programa Trim Intro.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente atribuido.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c58a00"></span>Matrícula</b>Matrícula separada asociada al cliente captado.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#6b4bb7"></span>Ajuste intro</b>S/ 900 faltante cuando el Intro aparece incompleto.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#2468d8"></span>PT</b>Primera compra de Personal Training.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#0f8b83"></span>Semi</b>Primera compra de Semi personalizado.</div>
-          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Rec. cartera previa</b>Compras de clientes atribuidos en meses anteriores.</div>
+          <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#c44545"></span>Rec. cartera previa</b>Compras de clientes captados en meses anteriores.</div>
           <div class="impact-explainer-item"><b><span class="impact-dot" style="background:#28706f"></span>Recompra mes</b>Compra posterior dentro del mismo mes de captación.</div>
         </div>
         <div class="efficiency-panel" id="efficiencyPanel"></div>
@@ -896,7 +896,7 @@ const html = `<!doctype html>
         <div class="chart-box"><canvas id="salesChart"></canvas></div>
       </div>
       <div class="panel wide">
-        <div class="panel-title"><h2>Escenario sin Llama Leads mes a mes</h2><span class="hint">facturacion estimada sin clientes atribuidos</span></div>
+        <div class="panel-title"><h2>Escenario sin Llama Leads mes a mes</h2><span class="hint">facturacion estimada sin clientes captados por Llama Leads</span></div>
         <div class="chart-box"><canvas id="noLlamaChart"></canvas></div>
       </div>
       <div class="panel">
@@ -1005,7 +1005,7 @@ const html = `<!doctype html>
       sede: ['Todos', ...uniq(ventas.map(r => r.Sede)).sort()],
       year: ['Todos', ...uniq(ventas.map(r => String(r.Mes || '').slice(0, 4))).sort()],
       mes: monthOptions,
-      origen: ['Todos', ...uniq([...ventas.map(r => r.Origen), ...historicalLeadSources2025, 'Matrícula atribuida', 'Ajuste Trim Intro']).sort()],
+      origen: ['Todos', ...uniq([...ventas.map(r => r.Origen), ...historicalLeadSources2025, 'Matrícula captación LL', 'Ajuste Trim Intro']).sort()],
       plan: ['Todos', ...uniq(ventas.map(r => r['Tipo plan'])).sort()],
       llama: ['Todos', 'Solo Llama Leads', 'Sin Llama Leads'],
       matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula'],
@@ -1265,12 +1265,12 @@ const html = `<!doctype html>
         'Fecha fin': '',
         'Estado actual': 'Activo',
         'Tipo plan': 'Nuevo',
-        Origen: 'Matrícula atribuida',
+        Origen: 'Matrícula captación LL',
         'Tipo servicio': 'MATRICULA',
         Tiempo: '',
         Codigo: '',
-        Cliente: 'Matrícula atribuida ' + sede,
-        'Cliente norm': norm('Matrícula atribuida ' + sede + ' ' + mes),
+        Cliente: 'Matrícula captación LL ' + sede,
+        'Cliente norm': norm('Matrícula captación LL ' + sede + ' ' + mes),
         DNI: '',
         Celular: '',
         Costo: missing,
@@ -1636,7 +1636,7 @@ const html = `<!doctype html>
       const yoyText = lastYear ? (signNumber((current - lastYear) / lastYear)) : 's/d';
       document.querySelector('#flowCard').innerHTML =
         '<div class="flow-card">' +
-          '<div><div class="flow-title">Flujo real atribuido</div><div class="flow-sub">Mes de referencia: ' + (pk || 'sin datos') + '</div></div>' +
+          '<div><div class="flow-title">Flujo con captación Llama Leads</div><div class="flow-sub">Mes de referencia: ' + (pk || 'sin datos') + '</div></div>' +
           '<div class="flow-metric"><b>Valor del flujo</b><strong>' + money(current) + '</strong></div>' +
           '<div class="flow-metric"><b>Incremento vs mes ant.</b><strong class="' + cls + '">' + sign + money(Math.abs(delta)) + '</strong></div>' +
           '<div class="flow-metric"><b>Variacion</b><strong class="' + cls + '">' + (deltaPct === null ? 's/d' : signNumber(deltaPct)) + '</strong></div>' +
@@ -1681,10 +1681,10 @@ const html = `<!doctype html>
       const activeRate = p.generated ? p.active / p.generated : 0;
       document.querySelector('#impactSummary').innerHTML =
         '<div class="impact-summary">' +
-          '<div class="impact-card"><b>Venta acumulada real</b><strong>' + money(finalSold) + '</strong><span>Compras reales encontradas en el sistema para clientes generados por Llama Leads, sin sumar ajustes encima.</span></div>' +
+          '<div class="impact-card"><b>Venta acumulada real</b><strong>' + money(finalSold) + '</strong><span>Compras reales encontradas en el sistema para clientes captados por Llama Leads, sin sumar ajustes encima.</span></div>' +
           '<div class="impact-card"><b>Ajustes documentados</b><strong>' + money(documentedAdjustments) + '</strong><span>Matrícula no visible + gaps Trim Intro documentados. No incluye doble conteo de matrículas ya registradas.</span></div>' +
           '<div class="impact-card"><b>Impacto total auditado</b><strong>' + money(correctedImpact) + '</strong><span>Venta real en sistema + ajustes documentados auditables.</span></div>' +
-          '<div class="impact-card"><b>Mejor mes histórico</b><strong>' + best.key + '</strong><span>' + money(best.value) + ' de venta atribuida corregida.</span></div>' +
+          '<div class="impact-card"><b>Mejor mes histórico</b><strong>' + best.key + '</strong><span>' + money(best.value) + ' de venta con captación corregida.</span></div>' +
           '<div class="impact-card"><b>Inversión junio</b><strong>' + money(investment2026) + '</strong><span>Pauta ' + money(adsJune2026) + ' + servicio ' + money(serviceJune2026) + ' al 30/06 10:37 pm.</span></div>' +
           '<div class="impact-card"><b>Inversión acumulada</b><strong>' + money(investment) + '</strong><span>2025: ' + money(investment2025) + ' | ene-may 2026: ' + money(investmentJanMay2026) + ' | jun 2026: ' + money(investment2026) + '.</span></div>' +
           '<div class="impact-card"><b>Retorno real vs inversión</b><strong>' + roiRealMultiple.toFixed(1).replace('.', ',') + 'x</strong><span>Sobre venta real en sistema, sin ajustes encima.</span></div>' +
@@ -1693,7 +1693,7 @@ const html = `<!doctype html>
           '<div class="impact-card"><b>Gap Trim Intro Mendiburu</b><strong>' + money(introGap) + '</strong><span>S/ 900 documentado cuando el Intro aparece visible como S/ 1,000.</span></div>' +
           '<div class="impact-card"><b>Matrícula no visible</b><strong>' + money(matriculaAudit.estimadaNoVisible) + '</strong><span>Ene-mar: S/ 399 por nuevo; abr-jun: Intro S/ 900 y PT S/ 399 cuando no aparece como fila.</span></div>' +
         '</div>' +
-        '<div class="method-note"><b>Cómo medir impacto:</b> 1) venta nueva atribuida corregida, 2) matrículas cobradas por esos clientes, 3) recompra/LTV posterior, 4) clientes activos vs vencidos, 5) payback y retorno contra inversión. Así se mide el aporte de Llama Leads como crecimiento incremental y no solo como leads sueltos.</div>';
+        '<div class="method-note"><b>Cómo medir impacto:</b> 1) venta nueva con captación Llama Leads corregida, 2) matrículas cobradas por esos clientes, 3) recompra/LTV posterior, 4) clientes activos vs vencidos, 5) payback y retorno contra inversión. Así se mide el aporte de Llama Leads como crecimiento incremental y no solo como leads sueltos.</div>';
     }
     function renderKpis(rows) {
       const m = calc(rows);
@@ -1727,7 +1727,7 @@ const html = `<!doctype html>
       document.querySelector('#filterLabel').textContent = [els.sede.value, els.year.value, els.mes.value, els.origen.value, els.plan.value, els.llama.value, els.matricula.value].join(' | ');
       const items = [
         [primaryLabel, money(primaryValue), primaryDetail, primaryValue, isAcquisitionView || isSoloLlama ? primaryPrev : pm.total, isAcquisitionView || isSoloLlama ? primaryPrevYear : py.total],
-        ['Impacto real Llama Leads', money(acq), pct(m.total ? acq / m.total : 0) + ' del filtro', acq, attributedForPeriod(shiftMonth(pk, -1)), attributedForPeriod(shiftMonth(pk, -12))],
+        ['Impacto Llama Leads', money(acq), pct(m.total ? acq / m.total : 0) + ' del filtro', acq, attributedForPeriod(shiftMonth(pk, -1)), attributedForPeriod(shiftMonth(pk, -12))],
         ['Clientes unicos', m.clients.toLocaleString('es-PE'), m.active + ' activos', m.clients, pm.clients, py.clients],
         ['Clientes generados', p.generated.toLocaleString('es-PE'), money(p.total) + ' acumulado', p.generated, 0, 0],
         ['Ticket promedio', money2(m.tx ? m.total / m.tx : 0), 'por transaccion', m.tx ? m.total / m.tx : 0, pm.tx ? pm.total / pm.tx : 0, py.tx ? py.total / py.tx : 0],
@@ -1757,13 +1757,13 @@ const html = `<!doctype html>
         '<div class="counterfactual-card">' +
           '<div class="counterfactual-title"><b>Escenario sin Llama Leads</b><strong>Esto es lo que el negocio probablemente no habría capturado con la misma velocidad.</strong><span>Simulación simple del filtro actual: facturación real menos impacto Llama Leads documentado.</span></div>' +
           '<div><b>Venta real</b><strong>' + money(m.total) + '</strong><span>Facturación del filtro actual.</span></div>' +
-          '<div><b>Sin Llama Leads</b><strong>' + money(saleWithoutLlama) + '</strong><span>Venta estimada sin clientes atribuidos.</span></div>' +
+          '<div><b>Sin Llama Leads</b><strong>' + money(saleWithoutLlama) + '</strong><span>Venta estimada sin clientes captados por Llama Leads.</span></div>' +
           '<div class="counterfactual-loss"><b>Brecha generada</b><strong>' + money(acq) + '</strong><span>' + pct(m.total ? acq / m.total : 0) + ' de la venta depende del impacto Llama.</span></div>' +
         '</div>',
-        '<div class="split-card"><b>Venta nueva atribuida</b><strong>' + money(nuevaSinMatricula) + '</strong><span>sin matrícula</span></div>',
-        '<div class="split-card"><b>Matrícula atribuida</b><strong>' + money(matriculaAttrib) + '</strong><span>costo separado</span></div>',
+        '<div class="split-card"><b>Venta nueva captación LL</b><strong>' + money(nuevaSinMatricula) + '</strong><span>sin matrícula</span></div>',
+        '<div class="split-card"><b>Matrícula captación LL</b><strong>' + money(matriculaAttrib) + '</strong><span>costo separado</span></div>',
         '<div class="split-card"><b>Gap Trim Intro Mendiburu</b><strong>' + money(introGap) + '</strong><span>S/ 900 por Intro visible como S/ 1,000</span></div>',
-        '<div class="split-card"><b>Venta recurrente atribuida</b><strong>' + money(attributedRecurrent) + '</strong><span>' + pct(m.attributed ? attributedRecurrent / m.attributed : 0) + ' de venta atribuida</span></div>',
+        '<div class="split-card"><b>Venta recurrente LL</b><strong>' + money(attributedRecurrent) + '</strong><span>' + pct(m.attributed ? attributedRecurrent / m.attributed : 0) + ' de venta con captación LL</span></div>',
         '<div class="split-card"><b>Recurrencia cartera previa</b><strong>' + money(previousCohortRecurrent) + '</strong><span>clientes creados en meses anteriores al mes de venta</span></div>',
         '<div class="split-card"><b>Recompra creados en mes</b><strong>' + money(sameMonthRecurrent) + '</strong><span>renovaciones de clientes creados en ese mismo mes</span></div>',
         '<div class="split-card"><b>Mix por cantidad</b><strong>PT ' + pct(mixTotalQty ? ptRows.length / mixTotalQty : 0) + '</strong><span>Semi ' + pct(mixTotalQty ? semiRows.length / mixTotalQty : 0) + ' | base PT+Semi: ' + mixTotalQty.toLocaleString('es-PE') + ' compras</span></div>',
@@ -2558,7 +2558,7 @@ const html = `<!doctype html>
         if (corrected !== undefined) r.attrib = corrected;
       });
       document.querySelector('#monthCount').textContent = byMonth.length + ' filas';
-      document.querySelector('#monthTable').innerHTML = table(['Sede','Mes','Venta total','Venta atribuida','% atrib.','Tx','Clientes','Activos'], byMonth.map(r => [r.sede, r.mes, money(r.sale), money(r.attrib), pct(r.sale ? r.attrib / r.sale : 0), r.tx, r.clients.size, r.active.size]), [2,3,4,5,6,7]);
+      document.querySelector('#monthTable').innerHTML = table(['Sede','Mes','Venta total','Captación LL','% capt. LL','Tx','Clientes','Activos'], byMonth.map(r => [r.sede, r.mes, money(r.sale), money(r.attrib), pct(r.sale ? r.attrib / r.sale : 0), r.tx, r.clients.size, r.active.size]), [2,3,4,5,6,7]);
       const attributedRows = rows.filter(r => r['Atribuido agencia'] === 'Si');
       const byClient = group(attributedRows, r => r.Sede + '|' + r['Cliente norm'], r => ({
         sede: r.Sede,
@@ -2581,14 +2581,14 @@ const html = `<!doctype html>
         else s.recurrente += pago;
       }).sort((a, b) => b.total - a.total || a.cliente.localeCompare(b.cliente));
       document.querySelector('#attribRankCount').textContent = byClient.length + ' clientes';
-      document.querySelector('#attribRankTable').innerHTML = table(['#','Sede','Cliente','Total atribuido','Nuevo','Recurrente','Matrícula','Ajuste Intro','Tx','Último mes'], byClient.map((r, i) => [i + 1, r.sede, r.cliente, money(r.total), money(r.nuevo), money(r.recurrente), money(r.matricula), money(r.ajuste), r.tx, r.ultimoMes]), [0,3,4,5,6,7,8]);
+      document.querySelector('#attribRankTable').innerHTML = table(['#','Sede','Cliente','Total captación LL','Nuevo','Recurrente','Matrícula','Ajuste Intro','Tx','Último mes'], byClient.map((r, i) => [i + 1, r.sede, r.cliente, money(r.total), money(r.nuevo), money(r.recurrente), money(r.matricula), money(r.ajuste), r.tx, r.ultimoMes]), [0,3,4,5,6,7,8]);
       const historical = historicalValidationRows();
       const historicalMatched = historical.filter(r => r.match === 'Si');
       document.querySelector('#historicalCount').textContent = historicalMatched.length + '/' + historical.length + ' con match | ' + money(historicalMatched.reduce((a, r) => a + Number(r.total || 0), 0));
       document.querySelector('#historicalTable').innerHTML = table(['Fecha lead','Cliente lead','Fuente','Match','Sede','Cliente encontrado','Total comprado','Tx','Primera compra','Última compra'], historical.map(r => [r.date, r.name, r.source, r.match === 'Si' ? '<span class="pill yes">' + r.matchType + '</span>' : '<span class="pill bad">Sin match</span>', r.sede || '-', r.clienteExcel || '-', money(r.total), r.tx, r.primeraCompra || '-', r.ultimaCompra || '-']), [6,7]);
       const sorted = [...rows].sort((a, b) => String(b.Inscripcion).localeCompare(String(a.Inscripcion))).slice(0, 500);
       document.querySelector('#rowCount').textContent = rows.length.toLocaleString('es-PE') + ' ventas';
-      document.querySelector('#salesTable').innerHTML = table(['Sede','Mes','Cliente','Plan','Origen','Servicio','Estado','Pago','Atribuido'], sorted.map(r => [r.Sede, r.Mes, r.Cliente, r['Tipo plan'], r.Origen, r['Tipo servicio'], r['Estado actual'] === 'Activo' ? '<span class="pill ok">Activo</span>' : '<span class="pill bad">Vencido</span>', money(r.Pago), r['Atribuido agencia'] === 'Si' ? '<span class="pill yes">Si</span>' : 'No']), [7]);
+      document.querySelector('#salesTable').innerHTML = table(['Sede','Mes','Cliente','Plan','Origen','Servicio','Estado','Pago','Captación LL'], sorted.map(r => [r.Sede, r.Mes, r.Cliente, r['Tipo plan'], r.Origen, r['Tipo servicio'], r['Estado actual'] === 'Activo' ? '<span class="pill ok">Activo</span>' : '<span class="pill bad">Vencido</span>', money(r.Pago), r['Atribuido agencia'] === 'Si' ? '<span class="pill yes">Si</span>' : 'No']), [7]);
     }
     function table(headers, rows, numeric = []) {
       if (!rows.length) return '<tbody><tr><td>Sin resultados para este filtro.</td></tr></tbody>';
@@ -2624,7 +2624,7 @@ const html = `<!doctype html>
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'clientes_atribuidos_trim_gym.csv';
+      a.download = 'clientes_captacion_llama_leads_trim_gym.csv';
       a.click();
       URL.revokeObjectURL(url);
     });
