@@ -2198,34 +2198,51 @@ const html = `<!doctype html>
         top -= recPrevH; ctx.fillRect(x, top, bw, recPrevH);
         ctx.fillStyle = '#28706f';
         top -= recSameH; ctx.fillRect(x, top, bw, recSameH);
-        if (newH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(nuevos[i]), x + bw / 2, h - pad.b - newH / 2 + 4);
-        }
-        if (matH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(matriculas[i]), x + bw / 2, h - pad.b - newH - matH / 2 + 4);
-        }
-        if (adjH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(ajustesIntro[i]), x + bw / 2, h - pad.b - newH - matH - adjH / 2 + 4);
-        }
-        if (ptH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(pts[i]), x + bw / 2, h - pad.b - newH - matH - adjH - ptH / 2 + 4);
-        }
-        if (semiH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(semis[i]), x + bw / 2, h - pad.b - newH - matH - adjH - ptH - semiH / 2 + 4);
-        }
-        if (recPrevH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(recurrentesPrev[i]), x + bw / 2, h - pad.b - newH - matH - adjH - ptH - semiH - recPrevH / 2 + 4);
-        }
-        if (recSameH > 22) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
-          ctx.fillText(money(recurrentesSame[i]), x + bw / 2, h - pad.b - newH - matH - adjH - ptH - semiH - recPrevH - recSameH / 2 + 4);
-        }
+        const segmentLabels = [];
+        let labelTop = h - pad.b;
+        [
+          { value: nuevos[i], height: newH },
+          { value: matriculas[i], height: matH },
+          { value: ajustesIntro[i], height: adjH },
+          { value: pts[i], height: ptH },
+          { value: semis[i], height: semiH },
+          { value: recurrentesPrev[i], height: recPrevH },
+          { value: recurrentesSame[i], height: recSameH }
+        ].forEach(segment => {
+          const bottom = labelTop;
+          labelTop -= segment.height;
+          if (segment.value > 0 && segment.height > 1) {
+            segmentLabels.push({ value: segment.value, height: segment.height, center: labelTop + segment.height / 2 });
+          }
+        });
+        const externalLabels = [];
+        segmentLabels.forEach(segment => {
+          if (segment.height >= 18) {
+            ctx.fillStyle = '#fff'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(money(segment.value), x + bw / 2, segment.center);
+          } else if (!tierMode) {
+            externalLabels.push(segment);
+          }
+        });
+        externalLabels.sort((a, b) => a.center - b.center);
+        externalLabels.forEach((segment, idx) => {
+          const drawRight = x + bw + 56 < w - pad.r;
+          const desired = segment.center;
+          const prev = idx ? externalLabels[idx - 1].labelY : pad.t - 12;
+          segment.labelY = Math.max(desired, prev + 12);
+          segment.labelY = Math.min(segment.labelY, h - pad.b - 8);
+          const lineStart = drawRight ? x + bw : x;
+          const lineEnd = drawRight ? x + bw + 6 : x - 6;
+          const textX = drawRight ? x + bw + 9 : x - 9;
+          ctx.strokeStyle = 'rgba(102,112,133,.45)';
+          ctx.beginPath(); ctx.moveTo(lineStart, segment.center); ctx.lineTo(lineEnd, segment.labelY); ctx.stroke();
+          ctx.fillStyle = '#475467';
+          ctx.font = '9px Segoe UI, Arial';
+          ctx.textAlign = drawRight ? 'left' : 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(money(segment.value), textX, segment.labelY);
+        });
+        ctx.textBaseline = 'alphabetic';
         ctx.fillStyle = '#172033';
         ctx.font = '11px Segoe UI, Arial';
         ctx.textAlign = 'center';
