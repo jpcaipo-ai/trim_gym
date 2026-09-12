@@ -1997,7 +1997,7 @@
     }
     function firstPurchaseTier(value) {
       const amount = Number(value || 0);
-      if (amount >= 60000) return { color: '#111111', label: 'S/ 60k+', name: 'Mes estrella' };
+      if (amount >= 60000) return { color: '#f5b301', label: 'S/ 60k+', name: 'Mes estrella' };
       if (amount >= 40000) return { color: '#df1119', label: 'S/ 40k+', name: 'Alto impacto' };
       if (amount >= 30000) return { color: '#1f8a4c', label: 'S/ 30k+', name: 'Fuerte' };
       if (amount >= 15000) return { color: '#c58a00', label: 'S/ 15k+', name: 'Base sólida' };
@@ -2191,7 +2191,7 @@
           ['#c58a00', 'S/ 15k+'],
           ['#1f8a4c', 'S/ 30k+'],
           ['#df1119', 'S/ 40k+'],
-          ['#111111', 'S/ 60k+']
+          ['#f5b301', 'S/ 60k+']
         ];
         ctx.fillStyle = '#8a7461';
         ctx.font = '10px Segoe UI, Arial';
