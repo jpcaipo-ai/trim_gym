@@ -213,6 +213,29 @@
       background: #fff;
       font-size: 12px;
     }
+    .chart-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf2;
+    }
+    .chart-tab {
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 10px;
+      cursor: pointer;
+    }
+    .chart-tab.active {
+      background: #111;
+      color: #fff;
+    }
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(130px, 1fr));
@@ -756,8 +779,11 @@
         <div class="panel-title">
           <h2>Impacto real Llama Leads mes a mes</h2>
           <div class="panel-actions">
-            <label for="impactMode">Vista</label>
-            <select id="impactMode"></select>
+            <label>Vista</label>
+            <div class="chart-tabs" role="tablist" aria-label="Vista impacto Llama Leads">
+              <button class="chart-tab active" type="button" data-impact-mode="ltv" aria-selected="true">LTV acumulado</button>
+              <button class="chart-tab" type="button" data-impact-mode="first" aria-selected="false">1era compra</button>
+            </div>
           </div>
         </div>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
@@ -837,7 +863,6 @@
       plan: document.querySelector('#plan'),
       llama: document.querySelector('#llama'),
       matricula: document.querySelector('#matricula'),
-      impactMode: document.querySelector('#impactMode'),
       buscar: document.querySelector('#buscar')
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
@@ -847,6 +872,11 @@
       const [year, month] = String(key || '').split('-');
       return monthNames[month] && year ? monthNames[month] + ' ' + year : '';
     };
+    const shortMonthLabel = key => {
+      const [year, month] = String(key || '').split('-');
+      if (!monthNames[month] || !year) return key || '';
+      return monthNames[month].slice(0, 3) + ' ' + year.slice(2);
+    };
     const historicalLeadSources2025 = ['Form free trial', 'Free trial', 'Referido lead', 'Form meta', 'Web', 'Instagram'];
     const lists = {
       sede: ['Todos', ...uniq(ventas.map(r => r.Sede)).sort()],
@@ -855,12 +885,12 @@
       origen: ['Todos', ...uniq([...ventas.map(r => r.Origen), ...historicalLeadSources2025, 'Matrícula atribuida', 'Ajuste Trim Intro']).sort()],
       plan: ['Todos', ...uniq(ventas.map(r => r['Tipo plan'])).sort()],
       llama: ['Todos', 'Solo Llama Leads', 'Sin Llama Leads'],
-      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula'],
-      impactMode: ['Impacto total Llama', 'Solo nuevos del mes']
+      matricula: ['Con matrícula', 'Solo nuevos + matrículas', 'Sin matrícula', 'Solo matrícula']
     };
-    for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula', 'impactMode']) {
+    for (const key of ['sede', 'year', 'mes', 'origen', 'plan', 'llama', 'matricula']) {
       els[key].innerHTML = lists[key].map(v => '<option>' + escapeHtml(v) + '</option>').join('');
     }
+    let impactMode = 'ltv';
     function monthFromCapture(label) {
       return captureMonthMap[label] || '';
     }
@@ -1847,7 +1877,7 @@
       ctx.fillText('solo facturacion sin Llama Leads', w - pad.r, 24);
     }
     function attributedComboChart(id, rows) {
-      const monthOnly = els.impactMode.value === 'Solo nuevos del mes';
+      const monthOnly = impactMode === 'first';
       const acq = acquisitionMonthlyTotals(false);
       const actual = group(rows.filter(r => r['Atribuido agencia'] === 'Si'), r => r.Mes, (r, key) => ({ key, actual: 0 }), (s, r) => {
         s.actual += Number(r.Pago || 0);
@@ -1939,19 +1969,19 @@
         ctx.textAlign = 'center';
         ctx.fillText(money(totals[i]), x + bw / 2, Math.max(14, y - 7));
         ctx.save(); ctx.translate(x + bw / 2, h - 16); ctx.rotate(-Math.PI / 4);
-        ctx.fillStyle = '#667085'; ctx.textAlign = 'right'; ctx.fillText(label, 0, 0); ctx.restore();
+        ctx.fillStyle = '#667085'; ctx.textAlign = 'right'; ctx.fillText(shortMonthLabel(label), 0, 0); ctx.restore();
       });
       ctx.fillStyle = '#1f8a4c'; ctx.fillRect(pad.l, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText('Nuevos', pad.l + 16, 22);
+      ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText('1era compra', pad.l + 16, 22);
       ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l + 132, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.fillText('Matrícula', pad.l + 148, 22);
+      ctx.fillStyle = '#334155'; ctx.fillText('Matrícula Intro', pad.l + 148, 22);
       ctx.fillStyle = '#6b4bb7'; ctx.fillRect(pad.l + 230, 12, 11, 11);
-      ctx.fillStyle = '#334155'; ctx.fillText('Ajuste Intro', pad.l + 246, 22);
+      ctx.fillStyle = '#334155'; ctx.fillText('Ajuste S/900', pad.l + 246, 22);
       if (!monthOnly) {
         ctx.fillStyle = '#c44545'; ctx.fillRect(pad.l + 340, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Rec. cartera previa', pad.l + 356, 22);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra previa', pad.l + 356, 22);
         ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 488, 12, 11, 11);
-        ctx.fillStyle = '#334155'; ctx.fillText('Recompra mes', pad.l + 504, 22);
+        ctx.fillStyle = '#334155'; ctx.fillText('Recompra mismo mes', pad.l + 504, 22);
       }
     }
     function donutChart(id, labels, values) {
@@ -2271,6 +2301,17 @@
       renderTables(rows);
     }
     Object.values(els).forEach(el => el.addEventListener('input', update));
+    document.querySelectorAll('[data-impact-mode]').forEach(button => {
+      button.addEventListener('click', () => {
+        impactMode = button.dataset.impactMode || 'ltv';
+        document.querySelectorAll('[data-impact-mode]').forEach(tab => {
+          const active = tab === button;
+          tab.classList.toggle('active', active);
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        update();
+      });
+    });
     document.querySelector('#exportClients')?.addEventListener('click', () => {
       const table = document.querySelector('#attribRankTable');
       const lines = [...table.querySelectorAll('tr')].map(tr => [...tr.children].map(td => '"' + String(td.textContent || '').replace(/"/g, '""') + '"').join(','));
