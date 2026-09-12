@@ -902,6 +902,11 @@ const html = `<!doctype html>
       if (!monthNames[month] || !year) return key || '';
       return monthNames[month].slice(0, 3) + ' ' + year.slice(2);
     };
+    const monthLabelParts = key => {
+      const [year, month] = String(key || '').split('-');
+      if (!monthNames[month] || !year) return [key || '', ''];
+      return [monthNames[month].slice(0, 3), year];
+    };
     const historicalLeadSources2025 = ['Form free trial', 'Free trial', 'Referido lead', 'Form meta', 'Web', 'Instagram'];
     const lists = {
       sede: ['Todos', ...uniq(ventas.map(r => r.Sede)).sort()],
@@ -2059,8 +2064,13 @@ const html = `<!doctype html>
         ctx.font = '11px Segoe UI, Arial';
         ctx.textAlign = 'center';
         ctx.fillText(money(totals[i]), x + bw / 2, Math.max(14, y - 7));
-        ctx.save(); ctx.translate(x + bw / 2, h - 16); ctx.rotate(-Math.PI / 4);
-        ctx.fillStyle = '#667085'; ctx.textAlign = 'right'; ctx.fillText(shortMonthLabel(label), 0, 0); ctx.restore();
+        const [monthPart, yearPart] = monthLabelParts(label);
+        ctx.fillStyle = '#667085';
+        ctx.font = '11px Segoe UI, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(monthPart, x + bw / 2, h - 34);
+        ctx.fillStyle = '#8a7461';
+        ctx.fillText(yearPart, x + bw / 2, h - 18);
       });
       if (detailMode) {
         ctx.fillStyle = '#c58a00'; ctx.fillRect(pad.l, 12, 11, 11);
