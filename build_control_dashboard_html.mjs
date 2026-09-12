@@ -2010,6 +2010,14 @@ const html = `<!doctype html>
       if (amount >= 1800) return 'intro';
       return 'semi';
     }
+    function firstPurchaseTier(value) {
+      const amount = Number(value || 0);
+      if (amount >= 60000) return { color: '#111111', label: 'S/ 60k+', name: 'Mes estrella' };
+      if (amount >= 40000) return { color: '#df1119', label: 'S/ 40k+', name: 'Alto impacto' };
+      if (amount >= 30000) return { color: '#1f8a4c', label: 'S/ 30k+', name: 'Fuerte' };
+      if (amount >= 15000) return { color: '#c58a00', label: 'S/ 15k+', name: 'Base sólida' };
+      return { color: '#8a7461', label: '< S/ 15k', name: 'Inicial' };
+    }
     function firstPurchaseTypeMonthlyTotals(acqTotals) {
       const raw = group(acquisitionRows(false), r => r.Sede + '|' + r.Mes, (r, key) => ({
         key,
@@ -2097,10 +2105,25 @@ const html = `<!doctype html>
       const recurrentesSame = displayMonths.map(r => monthOnly ? 0 : r.recurrenteSame);
       const { ctx, w, h } = canvasCtx(id);
       ctx.clearRect(0, 0, w, h);
-      const pad = { l: 58, r: 24, t: 42, b: 64 };
+      const tierMode = monthOnly && !detailMode;
+      const pad = { l: tierMode ? 70 : 58, r: 24, t: 42, b: 64 };
       const max = Math.max(...totals, ...nuevos, ...matriculas, ...ajustesIntro, ...pts, ...semis, ...recurrentesPrev, ...recurrentesSame, 1);
       ctx.strokeStyle = '#d7dee9';
       ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      if (tierMode) {
+        [15000, 30000, 40000, 60000].filter(v => v <= max).forEach(value => {
+          const gy = h - pad.b - (h - pad.t - pad.b) * value / max;
+          ctx.save();
+          ctx.setLineDash([5, 5]);
+          ctx.strokeStyle = 'rgba(17,17,17,.14)';
+          ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(w - pad.r, gy); ctx.stroke();
+          ctx.restore();
+          ctx.fillStyle = '#8a7461';
+          ctx.font = '10px Segoe UI, Arial';
+          ctx.textAlign = 'right';
+          ctx.fillText(money(value), pad.l - 7, gy + 3);
+        });
+      }
       const slot = (w - pad.l - pad.r) / Math.max(labels.length, 1);
       const bw = Math.max(16, slot * .54);
       labels.forEach((label, i) => {
@@ -2115,7 +2138,7 @@ const html = `<!doctype html>
         const x = pad.l + i * slot + (slot - bw) / 2;
         const y = h - pad.b - bh;
         let top = h - pad.b;
-        ctx.fillStyle = '#1f8a4c';
+        ctx.fillStyle = tierMode ? firstPurchaseTier(totals[i]).color : '#1f8a4c';
         top -= newH; ctx.fillRect(x, top, bw, newH);
         ctx.fillStyle = '#c58a00';
         top -= matH; ctx.fillRect(x, top, bw, matH);
@@ -2178,6 +2201,23 @@ const html = `<!doctype html>
         ctx.fillStyle = '#334155'; ctx.fillText('1era compra PT', pad.l + 242, 22);
         ctx.fillStyle = '#0f8b83'; ctx.fillRect(pad.l + 350, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.fillText('1era compra Semi', pad.l + 366, 22);
+      } else if (tierMode) {
+        const tiers = [
+          ['#c58a00', 'S/ 15k+'],
+          ['#1f8a4c', 'S/ 30k+'],
+          ['#df1119', 'S/ 40k+'],
+          ['#111111', 'S/ 60k+']
+        ];
+        ctx.fillStyle = '#8a7461';
+        ctx.font = '10px Segoe UI, Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('Nivel por mes:', pad.l, 22);
+        let lx = pad.l + 82;
+        tiers.forEach(([color, label]) => {
+          ctx.fillStyle = color; ctx.fillRect(lx, 12, 11, 11);
+          ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.fillText(label, lx + 16, 22);
+          lx += 78;
+        });
       } else {
         ctx.fillStyle = '#1f8a4c'; ctx.fillRect(pad.l, 12, 11, 11);
         ctx.fillStyle = '#334155'; ctx.font = '11px Segoe UI, Arial'; ctx.textAlign = 'left'; ctx.fillText(monthOnly ? '1era compra total' : '1era compra', pad.l + 16, 22);
