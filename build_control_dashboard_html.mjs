@@ -257,6 +257,9 @@ const html = `<!doctype html>
       font-size: 12px;
       line-height: 1.35;
     }
+    .impact-note.hidden {
+      display: none;
+    }
     .efficiency-panel {
       margin-top: 14px;
       display: grid;
@@ -842,7 +845,7 @@ const html = `<!doctype html>
             <select id="impactDetail"></select>
           </div>
         </div>
-        <p class="impact-note">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
+        <p class="impact-note" id="impactNote">El ajuste intro corrige ventas cargadas incompletas en el sistema: cuando un Intro figura solo como S/ 1,000, se suma el S/ 900 faltante para reflejar el precio real.</p>
         <div class="chart-box"><canvas id="attribChart"></canvas></div>
         <div class="efficiency-panel" id="efficiencyPanel"></div>
       </div>
@@ -2544,6 +2547,7 @@ const html = `<!doctype html>
     }
     function update() {
       const rows = filteredRows();
+      document.querySelector('#impactNote')?.classList.toggle('hidden', impactMode === 'first');
       renderKpis(rows);
       renderCharts(rows);
       renderSedeCards(rows);
