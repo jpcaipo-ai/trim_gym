@@ -834,7 +834,7 @@ const html = `<!doctype html>
     <section class="charts">
       <div class="panel wide">
         <div class="panel-title">
-          <h2>Impacto real Llama Leads mes a mes (LTV)</h2>
+          <h2 id="impactTitle">Impacto Llama Leads mes a mes (LTV)</h2>
           <div class="panel-actions">
             <label>Vista</label>
             <div class="chart-tabs" role="tablist" aria-label="Vista impacto Llama Leads">
@@ -2547,6 +2547,7 @@ const html = `<!doctype html>
     }
     function update() {
       const rows = filteredRows();
+      document.querySelector('#impactTitle').textContent = impactMode === 'ltv' ? 'Impacto Llama Leads mes a mes (LTV)' : 'Impacto Llama Leads mes a mes';
       document.querySelector('#impactNote')?.classList.toggle('hidden', impactMode === 'first');
       renderKpis(rows);
       renderCharts(rows);
