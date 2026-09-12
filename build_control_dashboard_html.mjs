@@ -1867,7 +1867,7 @@ const html = `<!doctype html>
         else if (plan.includes('renov')) s.renovaciones += amount;
         else if (plan.includes('reins')) s.reinscripciones += amount;
         else s.otros += amount;
-      }).sort((a, b) => a.key.localeCompare(b.key));
+      }).filter(r => r.key >= '2025-10').sort((a, b) => a.key.localeCompare(b.key));
       const labels = monthly.map(r => r.key);
       const totals = monthly.map(r => r.nuevos + r.renovaciones + r.reinscripciones + r.matriculas + r.otros);
       const series = [
@@ -1941,7 +1941,7 @@ const html = `<!doctype html>
       });
       const totalMap = new Map(totalRows.map(r => [r.key, r.total]));
       const impactMap = new Map(impactRows.map(r => [r.key, r.impact]));
-      const monthKeys = [...new Set([...totalMap.keys(), ...impactMap.keys()])].sort();
+      const monthKeys = [...new Set([...totalMap.keys(), ...impactMap.keys()])].filter(key => key >= '2025-10').sort();
       const months = monthKeys.map(key => {
         const total = totalMap.get(key) || 0;
         const impact = Math.min(total, impactMap.get(key) || 0);
