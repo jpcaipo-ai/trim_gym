@@ -49,6 +49,21 @@ const augustFiles = [
   },
 ];
 
+const septemberFiles = [
+  {
+    sede: "Trim 1 - Mendiburu",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (5).xls",
+  },
+  {
+    sede: "Trim 2 - Balboa",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (6).xls",
+  },
+  {
+    sede: "Trim 3 - Benavides",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (6).xls",
+  },
+];
+
 const manualJuneRows = [
   {
     Sede: "Trim 2 - Balboa",
@@ -272,11 +287,19 @@ for (const { sede, file } of augustFiles) {
     .filter((row) => row.Mes === "2026-08");
   augustRows.push(...parsed);
 }
+const septemberRows = [];
+for (const { sede, file } of septemberFiles) {
+  const parsed = parseHtmlTable(await fs.readFile(file, "utf8"))
+    .map((row) => toControlRow(sede, row))
+    .filter((row) => row.Mes === "2026-09");
+  septemberRows.push(...parsed);
+}
 
 const replacementSpecs = [
   ...juneFiles.map((f) => `${f.sede}|2026-06`),
   ...julyFiles.map((f) => `${f.sede}|2026-07`),
   ...augustFiles.map((f) => `${f.sede}|2026-08`),
+  ...septemberFiles.map((f) => `${f.sede}|2026-09`),
 ];
 const replacementKeys = new Set(replacementSpecs);
 const baseRows = (previous.ventas || []).filter((row) => !replacementKeys.has(`${row.Sede}|${row.Mes}`));
@@ -288,7 +311,7 @@ for (const row of manualJuneRows) {
     seen.add(key);
   }
 }
-const ventas = [...baseRows, ...juneRows, ...julyRows, ...augustRows].sort((a, b) =>
+const ventas = [...baseRows, ...juneRows, ...julyRows, ...augustRows, ...septemberRows].sort((a, b) =>
   `${a.Sede}|${a.Mes}|${a.Inscripcion}|${a.Cliente}`.localeCompare(`${b.Sede}|${b.Mes}|${b.Inscripcion}|${b.Cliente}`),
 );
 
@@ -306,13 +329,13 @@ await fs.writeFile(
   "utf8",
 );
 
-const juneSummary = group(
-  juneRows,
+const updatedSummary = group(
+  septemberRows,
   (r) => r.Sede,
-  (r) => ({ Sede: r.Sede, Venta: 0, Tx: 0 }),
+  (r) => ({ Sede: r.Sede, Mes: "2026-09", Venta: 0, Tx: 0 }),
   (s, r) => {
     s.Venta += Number(r.Pago || 0);
     s.Tx += 1;
   },
 );
-console.log(JSON.stringify(juneSummary, null, 2));
+console.log(JSON.stringify(updatedSummary, null, 2));

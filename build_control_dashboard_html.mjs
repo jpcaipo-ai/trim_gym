@@ -816,7 +816,7 @@ const html = `<!doctype html>
         <h1>Trim Gym | Tablero Comercial</h1>
         <div class="sub">Venta total, captación Llama Leads, pipeline de clientes generados y avance mensual</div>
       </div>
-      <div class="badge">Corte 30/06/2026</div>
+      <div class="badge">Corte 20/09/2026</div>
     </div>
       <div class="filters">
         <div><label>Sede</label><select id="sede"></select></div>
@@ -837,19 +837,19 @@ const html = `<!doctype html>
         <strong>Fuerza comercial, recompra y ventas con captación Llama Leads en un solo tablero ejecutivo.</strong>
       </div>
       <div class="summary-chip">
-        <b>Venta junio 3 sedes</b>
-        <strong>S/ 272,326</strong>
-        <span>corte 30/06/2026</span>
+        <b>Venta septiembre 3 sedes</b>
+        <strong>S/ 181,349</strong>
+        <span>corte 20/09/2026</span>
       </div>
       <div class="summary-chip">
-        <b>Impacto Llama junio</b>
-        <strong>S/ 62,757</strong>
+        <b>Impacto Llama septiembre</b>
+        <strong>S/ 36,376</strong>
         <span>nuevos + matrícula + ajustes</span>
       </div>
       <div class="summary-chip">
-        <b>Retorno junio</b>
-        <strong>7.6x</strong>
-        <span>vs pauta + servicio</span>
+        <b>Cierres septiembre</b>
+        <strong>16</strong>
+        <span>captación Llama Leads</span>
       </div>
     </section>
     <section class="hero">
@@ -868,11 +868,11 @@ const html = `<!doctype html>
     <section class="charts">
       <div class="panel wide">
         <div class="panel-title">
-          <h2 id="impactTitle">Impacto Llama Leads mes a mes (LTV)</h2>
+          <h2 id="impactTitle">Impacto Llama Leads mes a mes (LTV mensual)</h2>
           <div class="panel-actions">
             <label>Vista</label>
             <div class="chart-tabs" role="tablist" aria-label="Vista impacto Llama Leads">
-              <button class="chart-tab active" type="button" data-impact-mode="ltv" aria-selected="true">LTV acumulado</button>
+              <button class="chart-tab active" type="button" data-impact-mode="ltv" aria-selected="true">LTV mensual</button>
               <button class="chart-tab" type="button" data-impact-mode="first" aria-selected="false">1era compra</button>
             </div>
             <label for="impactDetail">Detalle</label>
@@ -969,7 +969,7 @@ const html = `<!doctype html>
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
     const monthOptions = ['Todos', ...Object.entries(monthNames).map(([num, name]) => num + ' - ' + name)];
-    const captureMonthMap = {'Octubre 2025':'2025-10','Noviembre 2025':'2025-11','Diciembre 2025':'2025-12','Enero 2026':'2026-01','Febrero 2026':'2026-02','Marzo 2026':'2026-03','Abril 2026':'2026-04','Mayo 2026':'2026-05','Junio 2026':'2026-06','Julio 2026':'2026-07','Agosto 2026':'2026-08'};
+    const captureMonthMap = {'Octubre 2025':'2025-10','Noviembre 2025':'2025-11','Diciembre 2025':'2025-12','Enero 2026':'2026-01','Febrero 2026':'2026-02','Marzo 2026':'2026-03','Abril 2026':'2026-04','Mayo 2026':'2026-05','Junio 2026':'2026-06','Julio 2026':'2026-07','Agosto 2026':'2026-08','Septiembre 2026':'2026-09'};
     const captureMonthLabel = key => {
       const [year, month] = String(key || '').split('-');
       return monthNames[month] && year ? monthNames[month] + ' ' + year : '';
@@ -1050,7 +1050,8 @@ const html = `<!doctype html>
         'Trim 3 - Benavides|Orissa Alvear',
         'Trim 3 - Benavides|Beatriz de la Puente',
         'Trim 3 - Benavides|Carolina Quino',
-        'Trim 3 - Benavides|Jimena Chocano'
+        'Trim 3 - Benavides|Jimena Chocano',
+        'Trim 1 - Mendiburu|Ayleen Cisneros'
       ]);
       return pt.has(key);
     }
@@ -1078,7 +1079,10 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-07': 17100,
       'Trim 1 - Mendiburu|2026-08': 21884,
       'Trim 2 - Balboa|2026-08': 7600,
-      'Trim 3 - Benavides|2026-08': 13300
+      'Trim 3 - Benavides|2026-08': 13300,
+      'Trim 1 - Mendiburu|2026-09': 19276,
+      'Trim 2 - Balboa|2026-09': 9500,
+      'Trim 3 - Benavides|2026-09': 7600
     };
     const acquisitionMatriculaTargets = {
       'Trim 1 - Mendiburu|2026-01': 1197,
@@ -1104,7 +1108,10 @@ const html = `<!doctype html>
       'Trim 3 - Benavides|2026-07': 8100,
       'Trim 1 - Mendiburu|2026-08': 5400,
       'Trim 2 - Balboa|2026-08': 3600,
-      'Trim 3 - Benavides|2026-08': 6300
+      'Trim 3 - Benavides|2026-08': 6300,
+      'Trim 1 - Mendiburu|2026-09': 0,
+      'Trim 2 - Balboa|2026-09': 0,
+      'Trim 3 - Benavides|2026-09': 0
     };
     const countedIntroGapTargets = {
       'Trim 1 - Mendiburu|2026-04': 7200,
@@ -1121,33 +1128,33 @@ const html = `<!doctype html>
     ]);
     const leadPipelineBySede = {
       'Trim 1 - Mendiburu': {
-        spend: 1295,
+        spend: 965,
         stages: [
-          { label: 'Nuevos leads', value: 427, cp: 3.03 },
-          { label: 'Formulario', value: 340, cp: 3.81 },
-          { label: 'Citas agendadas', value: 39, cp: 33.20 },
-          { label: 'Citas asistidas', value: 32, cp: 40.46 },
-          { label: 'Cierres', value: 11, cp: 117.70 }
+          { label: 'Nuevos leads', value: 188, cp: 5.13 },
+          { label: 'Formulario', value: 148, cp: 6.52 },
+          { label: 'Citas agendadas', value: 27, cp: 35.73 },
+          { label: 'Citas asistidas', value: 21, cp: 45.93 },
+          { label: 'Cierres', value: 7, cp: 137.80 }
         ]
       },
       'Trim 2 - Balboa': {
-        spend: 1296,
+        spend: 959,
         stages: [
-          { label: 'Nuevos leads', value: 491, cp: 2.64 },
-          { label: 'Formulario', value: 404, cp: 3.21 },
-          { label: 'Citas agendadas', value: 32, cp: 40.51 },
-          { label: 'Citas asistidas', value: 25, cp: 51.85 },
-          { label: 'Cierres', value: 4, cp: 324.07 }
+          { label: 'Nuevos leads', value: 262, cp: 3.66 },
+          { label: 'Formulario', value: 220, cp: 4.36 },
+          { label: 'Citas agendadas', value: 25, cp: 38.36 },
+          { label: 'Citas asistidas', value: 20, cp: 47.95 },
+          { label: 'Cierres', value: 5, cp: 191.81 }
         ]
       },
       'Trim 3 - Benavides': {
-        spend: 1299,
+        spend: 953,
         stages: [
-          { label: 'Nuevos leads', value: 460, cp: 2.83 },
-          { label: 'Formulario', value: 369, cp: 3.52 },
-          { label: 'Citas agendadas', value: 48, cp: 27.08 },
-          { label: 'Citas asistidas', value: 33, cp: 39.38 },
-          { label: 'Cierres', value: 7, cp: 185.66 }
+          { label: 'Nuevos leads', value: 288, cp: 3.31 },
+          { label: 'Formulario', value: 227, cp: 4.19 },
+          { label: 'Citas agendadas', value: 33, cp: 28.85 },
+          { label: 'Citas asistidas', value: 25, cp: 38.08 },
+          { label: 'Cierres', value: 4, cp: 238.01 }
         ]
       }
     };
@@ -1366,7 +1373,7 @@ const html = `<!doctype html>
       return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null;
     }
     function introConversionMetrics(rows) {
-      const cutoff = new Date(2026, 5, 30);
+      const cutoff = new Date(2026, 8, 20);
       const isPersonal = r => norm(r['Tipo servicio']).includes('personal');
       const isMemb = r => norm(r['Tipo servicio']).includes('membres');
       const isMat = r => norm(r['Tipo servicio']).includes('matr');
@@ -1479,7 +1486,7 @@ const html = `<!doctype html>
           'Compras total': h.tx,
           'Compras posteriores': Math.max(0, h.tx - 1),
           'Total pagado': h.total,
-          'Estado a 30/06/2026': h.estado
+          'Estado a 20/09/2026': h.estado
         });
       }
       const map = new Map();
@@ -1649,12 +1656,12 @@ const html = `<!doctype html>
       const rows = filteredGenerated();
       const total = rows.reduce((a, r) => a + Number(r['Total pagado'] || 0), 0);
       const repurchased = rows.filter(r => Number(r['Compras posteriores'] || 0) > 0).length;
-      const active = rows.filter(r => r['Estado a 30/06/2026'] === 'Activo').length;
-      const churn = rows.filter(r => r['Estado a 30/06/2026'] === 'Churn observado').length;
-      const cutoff = new Date(2026, 4, 2);
+      const active = rows.filter(r => r['Estado a 20/09/2026'] === 'Activo').length;
+      const churn = rows.filter(r => r['Estado a 20/09/2026'] === 'Churn observado').length;
+      const cutoff = new Date(2026, 7, 23);
       const abandoned30 = rows.filter(r => {
         const end = dateDMY(r['Ultima fecha fin']);
-        return r['Estado a 30/06/2026'] === 'Churn observado' && end && end < cutoff;
+        return r['Estado a 20/09/2026'] === 'Churn observado' && end && end < cutoff;
       }).length;
       return { generated: rows.length, total, repurchased, active, churn, abandoned30 };
     }
@@ -2039,7 +2046,7 @@ const html = `<!doctype html>
         '<div class="efficiency-card"><b>Mes inversión</b><select id="efficiencyMonth">' + monthOptionsHtml + '</select><span>' + escapeHtml(investment.note || '') + '</span></div>' +
         '<div class="efficiency-card"><b>Inversión total</b><strong>' + (totalInvestment ? money(totalInvestment) : 'Sin dato') + '</strong><span>Pauta + servicio</span></div>' +
         '<div class="efficiency-card"><b>Pauta</b><strong>' + (ads ? money(ads) : 'Sin dato') + '</strong><span>Base para ROAS y MER</span></div>' +
-        '<div class="efficiency-card"><b>Impacto Llama</b><strong>' + money(impact) + '</strong><span>' + (impactMode === 'ltv' ? 'Vista LTV' : 'Vista 1era compra') + '</span></div>' +
+        '<div class="efficiency-card"><b>Impacto Llama</b><strong>' + money(impact) + '</strong><span>' + (impactMode === 'ltv' ? 'Vista LTV mensual' : 'Vista 1era compra') + '</span></div>' +
         '<div class="efficiency-card"><b>ROAS</b><strong>' + (roas == null ? 'Sin dato' : roas.toFixed(1) + 'x') + '</strong><span>Impacto Llama / pauta</span></div>' +
         '<div class="efficiency-card"><b>MER</b><strong>' + (mer == null ? 'Sin dato' : mer.toFixed(1) + 'x') + '</strong><span>Facturación total / pauta</span></div>';
       document.querySelector('#efficiencyMonth')?.addEventListener('input', event => {
@@ -2544,7 +2551,7 @@ const html = `<!doctype html>
         .sort((a, b) => String(b.Inscripcion || '').localeCompare(String(a.Inscripcion || '')))
         .slice(0, 5);
       const initials = String(c['Cliente captura'] || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
-      const status = c['Estado a 30/06/2026'] || 's/d';
+      const status = c['Estado a 20/09/2026'] || 's/d';
       document.querySelector('#client360').innerHTML =
         '<div class="client360-head"><h2>Cliente 360</h2><span class="client-close">×</span></div>' +
         '<div class="client-profile"><div class="client-avatar">' + escapeHtml(initials) + '</div><div><div class="client-name">' + escapeHtml(c['Cliente captura']) + '</div><div class="client-source">' + escapeHtml(c.Sede) + ' · Llama Leads</div></div></div>' +
@@ -2628,7 +2635,7 @@ const html = `<!doctype html>
     }
     function update() {
       const rows = filteredRows();
-      document.querySelector('#impactTitle').textContent = impactMode === 'ltv' ? 'Impacto Llama Leads mes a mes (LTV)' : 'Impacto Llama Leads mes a mes';
+      document.querySelector('#impactTitle').textContent = impactMode === 'ltv' ? 'Impacto Llama Leads mes a mes (LTV mensual)' : 'Impacto Llama Leads mes a mes';
       if (impactMode === 'ltv') els.impactDetail.value = 'Bloque total';
       els.impactDetail.disabled = impactMode === 'ltv';
       document.querySelector('#impactNote')?.classList.toggle('hidden', impactMode === 'first');

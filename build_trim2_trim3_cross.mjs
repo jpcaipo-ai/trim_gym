@@ -18,6 +18,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (4).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (20) - Balboa.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (5).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (6).xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Jorge Salcedo", amount: 779, source: "Form web" },
@@ -60,6 +61,11 @@ const reports = [
       { month: "Agosto 2026", name: "Fiorella Valera", phone: "993082794", amount: 1900, source: "Form Meta" },
       { month: "Agosto 2026", name: "Karina Reyes Badia", phone: "995649000", amount: 1900, source: "Form Meta" },
       { month: "Agosto 2026", name: "Adriana Ospina Jimenez", phone: "", amount: 1900, source: "DM" },
+      { month: "Septiembre 2026", name: "Katia Ibañez", phone: "991662255", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Marcella Alcide Birolini", phone: "997907507", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Martina Kothe", phone: "999000583", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Luis Gonzalo Marquez", phone: "987540134", amount: 1900, source: "Form Web" },
+      { month: "Septiembre 2026", name: "Luz Stella", phone: "957788687", amount: 1900, source: "Form Meta" },
     ],
   },
   {
@@ -77,6 +83,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (4).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Benavides.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (5).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (6).xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Stefani Canzio", amount: 2219, source: "Instagram" },
@@ -150,6 +157,10 @@ const reports = [
       { month: "Agosto 2026", name: "Alfonso Labarthe", phone: "998191309", amount: 1900, source: "" },
       { month: "Agosto 2026", name: "Jackeline Neira", phone: "956593765", amount: 1900, source: "" },
       { month: "Agosto 2026", name: "Alfonso Callaux", phone: "994180642", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Jessica Lozano", phone: "988454004", amount: 1900, source: "Linktree" },
+      { month: "Septiembre 2026", name: "Jhonny Chaves", phone: "993927606", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Ana Carolina Ragas", phone: "975353413", amount: 1900, source: "Linktree" },
+      { month: "Septiembre 2026", name: "Elena Espinela", phone: "981482813", amount: 1900, source: "Form Meta" },
     ],
     manualSales: [],
   },
