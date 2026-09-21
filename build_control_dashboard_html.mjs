@@ -902,7 +902,14 @@ const html = `<!doctype html>
         <div class="chart-box"><canvas id="sourceChart"></canvas></div>
       </div>
       <div class="panel wide">
-        <div class="panel-title"><h2>Pipeline comercial visual</h2><span class="hint" id="pipelineFilterLabel">Todas las sedes</span></div>
+        <div class="panel-title">
+          <h2>Pipeline comercial visual</h2>
+          <div class="panel-actions">
+            <label for="pipelineSedeQuick">Sede</label>
+            <select id="pipelineSedeQuick"></select>
+            <span class="hint" id="pipelineFilterLabel">Todas las sedes</span>
+          </div>
+        </div>
         <div class="chart-box pipeline-box"><canvas id="pipelineChart"></canvas></div>
       </div>
       <div class="panel">
@@ -965,6 +972,7 @@ const html = `<!doctype html>
       llama: document.querySelector('#llama'),
       matricula: document.querySelector('#matricula'),
       impactDetail: document.querySelector('#impactDetail'),
+      pipelineSedeQuick: document.querySelector('#pipelineSedeQuick'),
       buscar: document.querySelector('#buscar')
     };
     const monthNames = { '01':'Enero', '02':'Febrero', '03':'Marzo', '04':'Abril', '05':'Mayo', '06':'Junio', '07':'Julio', '08':'Agosto', '09':'Septiembre', '10':'Octubre', '11':'Noviembre', '12':'Diciembre' };
@@ -1158,6 +1166,9 @@ const html = `<!doctype html>
         ]
       }
     };
+    els.pipelineSedeQuick.innerHTML = ['Todas las sedes', ...Object.keys(leadPipelineBySede)]
+      .map(v => '<option>' + escapeHtml(v) + '</option>')
+      .join('');
     const introAdjustmentTargets = {
       'Trim 1 - Mendiburu|2026-04': 7200,
       'Trim 1 - Mendiburu|2026-05': 2700
@@ -2494,7 +2505,8 @@ const html = `<!doctype html>
       });
     }
     function selectedLeadPipeline() {
-      const sedes = els.sede.value === 'Todos' ? Object.keys(leadPipelineBySede) : [els.sede.value].filter(s => leadPipelineBySede[s]);
+      const quickSede = els.pipelineSedeQuick.value;
+      const sedes = quickSede === 'Todas las sedes' ? Object.keys(leadPipelineBySede) : [quickSede].filter(s => leadPipelineBySede[s]);
       const labels = ['Nuevos leads', 'Formulario', 'Citas agendadas', 'Citas asistidas', 'Cierres'];
       const spend = sedes.reduce((a, sede) => a + Number(leadPipelineBySede[sede]?.spend || 0), 0);
       return labels.map((label, index) => {
@@ -2508,7 +2520,7 @@ const html = `<!doctype html>
       });
     }
     function selectedLeadPipelineLabel() {
-      return els.sede.value === 'Todos' ? 'Todas las sedes' : els.sede.value;
+      return els.pipelineSedeQuick.value || 'Todas las sedes';
     }
     function generatedForSede(sede) {
       return filteredGenerated().filter(r => r.Sede === sede);
