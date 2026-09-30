@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
 
-const today = new Date(2026, 8, 20);
+const today = new Date(2026, 8, 30);
 const outDir = path.resolve("outputs", "metricas_3_sedes");
 const outPath = path.join(outDir, "metricas_ltv_churn_3_sedes.xlsx");
 
@@ -36,8 +36,29 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (19)  Mendiburu.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (4).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (5).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Mendiburu.xls",
     ],
     clients: trim1Clients,
+    manualSales: [
+      {
+        tipoPlan: "Nuevo",
+        origen: "Form Meta",
+        tipoServicio: "PERSONALIZADO",
+        tiempo: "15 dias",
+        codigo: "",
+        nombres: "Lucienne",
+        apellidos: "Freund Thurne",
+        dni: "",
+        celular: "945018132",
+        inscripcion: "30/09/2026",
+        inicio: "30/09/2026",
+        fin: "15/10/2026",
+        costo: 2200,
+        pago: 2200,
+        debe: 0,
+        vendedor: "",
+      },
+    ],
   },
   ...trim23Reports,
 ];
@@ -195,7 +216,7 @@ function percentile(values, p) {
 const customerRows = [];
 const purchaseRows = [];
 const customerHeaders = [
-  "Sede", "Mes captura", "Cliente captura", "Telefono captura", "Monto captura", "Fuente captura", "Match usado", "Cliente Excel", "DNI", "Celular Excel", "Compras total", "Compras posteriores", "Total pagado", "Total costo", "Primera compra", "Ultima compra", "Ultima fecha fin", "Estado a 20/09/2026", "Frecuencia promedio meses", "Ticket promedio", "Observaciones",
+  "Sede", "Mes captura", "Cliente captura", "Telefono captura", "Monto captura", "Fuente captura", "Match usado", "Cliente Excel", "DNI", "Celular Excel", "Compras total", "Compras posteriores", "Total pagado", "Total costo", "Primera compra", "Ultima compra", "Ultima fecha fin", "Estado a 30/09/2026", "Frecuencia promedio meses", "Ticket promedio", "Observaciones",
 ];
 const purchaseHeaders = [
   "Sede", "Mes captura", "Cliente captura", "Match usado", "Cliente Excel", "DNI", "Celular", "Tipo plan", "Origen", "Tipo servicio", "Tiempo", "Inscripcion", "Fecha inicio", "Fecha fin", "Costo", "Pago", "Debe", "Vendedor",
@@ -326,7 +347,7 @@ const compras = workbook.worksheets.add("Compras");
 const defs = workbook.worksheets.add("Definiciones");
 
 dashboard.getRange("A1:O1").merge();
-dashboard.getRange("A1").values = [["Metricas alto impacto | Clientes generados por Trim Gym | Corte 20/09/2026"]];
+dashboard.getRange("A1").values = [["Metricas alto impacto | Clientes generados por Trim Gym | Corte 30/09/2026"]];
 dashboard.getRange("A3:O8").values = [
   ["Sede", "Clientes visibles", "Clientes encontrados", "Compras totales", "Total pagado", "LTV promedio", "LTV mediana", "LTV P75", "Clientes recompra", "% recompra", "Frecuencia prom meses", "Frecuencia mediana meses", "Churn clientes", "% churn observado", "Clientes activos"],
   ...metricRows,
@@ -346,8 +367,8 @@ defs.getRange("A1:B8").values = [
   ["Metrica", "Definicion usada"],
   ["LTV", "Total pagado acumulado en el Excel por cada cliente adquirido; promedio por sede y total."],
   ["Frecuencia de compra", "Meses promedio entre inscripciones/compras consecutivas, solo para clientes con recompra."],
-  ["Churn observado", "Cliente encontrado cuya ultima FECHA FIN es anterior al 20/09/2026."],
-  ["Activo", "Cliente encontrado con ultima FECHA FIN igual o posterior al 20/09/2026."],
+  ["Churn observado", "Cliente encontrado cuya ultima FECHA FIN es anterior al 30/09/2026."],
+  ["Activo", "Cliente encontrado con ultima FECHA FIN igual o posterior al 30/09/2026."],
   ["Clientes visibles", "Clientes que aparecen en las capturas/listas entregadas."],
   ["Compras posteriores", "Compras totales menos la primera compra encontrada del cliente."],
   ["Nota", "Edith Tapia se mantiene como match posible con EDITH MORI; validar si se requiere excluirla."],

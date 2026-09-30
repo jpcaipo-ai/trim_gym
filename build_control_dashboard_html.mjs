@@ -816,7 +816,7 @@ const html = `<!doctype html>
         <h1>Trim Gym | Tablero Comercial</h1>
         <div class="sub">Venta total, captación Llama Leads, pipeline de clientes generados y avance mensual</div>
       </div>
-      <div class="badge">Corte 20/09/2026</div>
+      <div class="badge">Corte 30/09/2026</div>
     </div>
       <div class="filters">
         <div><label>Sede</label><select id="sede"></select></div>
@@ -838,17 +838,17 @@ const html = `<!doctype html>
       </div>
       <div class="summary-chip">
         <b>Venta septiembre 3 sedes</b>
-        <strong>S/ 181,349</strong>
-        <span>corte 20/09/2026</span>
+        <strong>S/ 276,308</strong>
+        <span>corte 30/09/2026</span>
       </div>
       <div class="summary-chip">
         <b>Impacto Llama septiembre</b>
-        <strong>S/ 36,376</strong>
+        <strong>S/ 46,176</strong>
         <span>nuevos + matrícula + ajustes</span>
       </div>
       <div class="summary-chip">
         <b>Cierres septiembre</b>
-        <strong>16</strong>
+        <strong>21</strong>
         <span>captación Llama Leads</span>
       </div>
     </section>
@@ -1088,9 +1088,9 @@ const html = `<!doctype html>
       'Trim 1 - Mendiburu|2026-08': 21884,
       'Trim 2 - Balboa|2026-08': 7600,
       'Trim 3 - Benavides|2026-08': 13300,
-      'Trim 1 - Mendiburu|2026-09': 19276,
-      'Trim 2 - Balboa|2026-09': 9500,
-      'Trim 3 - Benavides|2026-09': 7600
+      'Trim 1 - Mendiburu|2026-09': 19576,
+      'Trim 2 - Balboa|2026-09': 17100,
+      'Trim 3 - Benavides|2026-09': 9500
     };
     const acquisitionMatriculaTargets = {
       'Trim 1 - Mendiburu|2026-01': 1197,
@@ -1384,7 +1384,7 @@ const html = `<!doctype html>
       return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null;
     }
     function introConversionMetrics(rows) {
-      const cutoff = new Date(2026, 8, 20);
+      const cutoff = new Date(2026, 8, 30);
       const isPersonal = r => norm(r['Tipo servicio']).includes('personal');
       const isMemb = r => norm(r['Tipo servicio']).includes('membres');
       const isMat = r => norm(r['Tipo servicio']).includes('matr');
@@ -1497,7 +1497,7 @@ const html = `<!doctype html>
           'Compras total': h.tx,
           'Compras posteriores': Math.max(0, h.tx - 1),
           'Total pagado': h.total,
-          'Estado a 20/09/2026': h.estado
+          'Estado a 30/09/2026': h.estado
         });
       }
       const map = new Map();
@@ -1667,12 +1667,12 @@ const html = `<!doctype html>
       const rows = filteredGenerated();
       const total = rows.reduce((a, r) => a + Number(r['Total pagado'] || 0), 0);
       const repurchased = rows.filter(r => Number(r['Compras posteriores'] || 0) > 0).length;
-      const active = rows.filter(r => r['Estado a 20/09/2026'] === 'Activo').length;
-      const churn = rows.filter(r => r['Estado a 20/09/2026'] === 'Churn observado').length;
-      const cutoff = new Date(2026, 7, 23);
+      const active = rows.filter(r => r['Estado a 30/09/2026'] === 'Activo').length;
+      const churn = rows.filter(r => r['Estado a 30/09/2026'] === 'Churn observado').length;
+      const cutoff = new Date(2026, 8, 1);
       const abandoned30 = rows.filter(r => {
         const end = dateDMY(r['Ultima fecha fin']);
-        return r['Estado a 20/09/2026'] === 'Churn observado' && end && end < cutoff;
+        return r['Estado a 30/09/2026'] === 'Churn observado' && end && end < cutoff;
       }).length;
       return { generated: rows.length, total, repurchased, active, churn, abandoned30 };
     }
@@ -2563,7 +2563,7 @@ const html = `<!doctype html>
         .sort((a, b) => String(b.Inscripcion || '').localeCompare(String(a.Inscripcion || '')))
         .slice(0, 5);
       const initials = String(c['Cliente captura'] || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join('').toUpperCase();
-      const status = c['Estado a 20/09/2026'] || 's/d';
+      const status = c['Estado a 30/09/2026'] || 's/d';
       document.querySelector('#client360').innerHTML =
         '<div class="client360-head"><h2>Cliente 360</h2><span class="client-close">×</span></div>' +
         '<div class="client-profile"><div class="client-avatar">' + escapeHtml(initials) + '</div><div><div class="client-name">' + escapeHtml(c['Cliente captura']) + '</div><div class="client-source">' + escapeHtml(c.Sede) + ' · Llama Leads</div></div></div>' +

@@ -16,6 +16,7 @@ const sourcePaths = [
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (19)  Mendiburu.xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (4).xls",
   "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (5).xls",
+  "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Mendiburu.xls",
 ];
 const outDir = path.resolve("outputs", "trim1_mendiburu");
 const outPath = path.join(outDir, "cruce_trim1_mendiburu_compras.xlsx");
@@ -90,7 +91,28 @@ const clients = [
   { month: "Septiembre 2026", name: "Claudia Vallejos", phone: "999001683", amount: 1900, source: "Form Meta" },
   { month: "Septiembre 2026", name: "Rosa Manrique", phone: "997516550", amount: 1900, source: "Form Meta" },
   { month: "Septiembre 2026", name: "Jimena Morales", phone: "994655810", amount: 1900, source: "Form Meta" },
-  { month: "Septiembre 2026", name: "Veronica Velasquez", phone: "944611398", amount: 1900, source: "Linktree" },
+  { month: "Septiembre 2026", name: "Lucienne Freund Thurne", phone: "945018132", amount: 2200, source: "Form Meta" },
+];
+
+const manualSales = [
+  {
+    "TIPO PLAN": "Nuevo",
+    ORIGEN: "Form Meta",
+    "TIPO SERVICIO": "PERSONALIZADO",
+    TIEMPO: "15 dias",
+    CODIGO: "",
+    NOMBRES: "Lucienne",
+    APELLIDOS: "Freund Thurne",
+    DNI: "",
+    CELULAR: "945018132",
+    INSCRIPCION: "30/09/2026",
+    "FECHA INICIO": "30/09/2026",
+    "FECHA FIN": "15/10/2026",
+    COSTO: 2200,
+    PAGO: 2200,
+    DEBE: 0,
+    VENDEDOR: "",
+  },
 ];
 
 function decodeEntities(text) {
@@ -185,6 +207,18 @@ async function parseSalesFiles(paths) {
   return all;
 }
 
+function normalizeManualSale(row) {
+  const out = { ...row };
+  out.COSTO = parseMoney(out.COSTO);
+  out.PAGO = parseMoney(out.PAGO);
+  out.DEBE = parseMoney(out.DEBE);
+  out.FULL = `${out.NOMBRES ?? ""} ${out.APELLIDOS ?? ""}`.replace(/\s+/g, " ").trim();
+  out.NORM = normalize(out.FULL);
+  out.PHONE_DIGITS = digits(out.CELULAR);
+  out.DNI_DIGITS = digits(out.DNI);
+  return out;
+}
+
 function samePersonRows(rows, seedRows) {
   const dnis = new Set(seedRows.map((r) => r.DNI_DIGITS).filter((v) => v && v.length >= 5));
   const phones = new Set(seedRows.map((r) => r.PHONE_DIGITS).filter((v) => v && v.length >= 9));
@@ -225,7 +259,7 @@ function findClient(rows, client) {
   return { matchType: seeds.length ? matchType : "Sin match", rows: personRows };
 }
 
-const sales = await parseSalesFiles(sourcePaths);
+const sales = [...await parseSalesFiles(sourcePaths), ...manualSales.map(normalizeManualSale)];
 const detailRows = [];
 const summaryRows = [];
 

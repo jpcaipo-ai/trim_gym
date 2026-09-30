@@ -19,6 +19,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (20) - Balboa.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (5).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (6).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Balboa.xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Jorge Salcedo", amount: 779, source: "Form web" },
@@ -66,6 +67,10 @@ const reports = [
       { month: "Septiembre 2026", name: "Martina Kothe", phone: "999000583", amount: 1900, source: "Form Meta" },
       { month: "Septiembre 2026", name: "Luis Gonzalo Marquez", phone: "987540134", amount: 1900, source: "Form Web" },
       { month: "Septiembre 2026", name: "Luz Stella", phone: "957788687", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Mariel Meza Rodriguez", phone: "946350416", amount: 1900, source: "Linktree" },
+      { month: "Septiembre 2026", name: "Jesus Lobo Arce", phone: "980526675", amount: 1900, source: "Form Web" },
+      { month: "Septiembre 2026", name: "Sandro Trigoso", phone: "982137941", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Alejandra Mendoza Ramirez", phone: "997059685", amount: 1900, source: "DM" },
     ],
   },
   {
@@ -84,6 +89,7 @@ const reports = [
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Benavides.xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (5).xls",
       "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (6).xls",
+      "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (19) - Benavides.xls",
     ],
     clients: [
       { month: "Enero 2026", name: "Stefani Canzio", amount: 2219, source: "Instagram" },
@@ -161,6 +167,7 @@ const reports = [
       { month: "Septiembre 2026", name: "Jhonny Chaves", phone: "993927606", amount: 1900, source: "Form Meta" },
       { month: "Septiembre 2026", name: "Ana Carolina Ragas", phone: "975353413", amount: 1900, source: "Linktree" },
       { month: "Septiembre 2026", name: "Elena Espinela", phone: "981482813", amount: 1900, source: "Form Meta" },
+      { month: "Septiembre 2026", name: "Maria Cristina Picon", phone: "976051195", amount: 1900, source: "Linktree" },
     ],
     manualSales: [],
   },
