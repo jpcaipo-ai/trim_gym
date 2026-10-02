@@ -52,15 +52,15 @@ const augustFiles = [
 const septemberFiles = [
   {
     sede: "Trim 1 - Mendiburu",
-    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Mendiburu.xls",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Mendiburu) (6).xls",
   },
   {
     sede: "Trim 2 - Balboa",
-    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (18) - Balboa.xls",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Balboa) (7).xls",
   },
   {
     sede: "Trim 3 - Benavides",
-    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (19) - Benavides.xls",
+    file: "C:\\Users\\jeanp\\Downloads\\InformeMatriculadosClientes (Benavides) (7).xls",
   },
 ];
 
@@ -110,32 +110,6 @@ const manualJuneRows = [
     Debe: 0,
     Vendedor: "ventasnoe",
     "Atribuido agencia": "No",
-  },
-];
-
-const manualSeptemberRows = [
-  {
-    Sede: "Trim 1 - Mendiburu",
-    Mes: "2026-09",
-    "Mes nombre": "",
-    Inscripcion: "30/09/2026",
-    "Fecha inicio": "30/09/2026",
-    "Fecha fin": "15/10/2026",
-    "Estado actual": "Activo",
-    "Tipo plan": "Nuevo",
-    Origen: "Form Meta",
-    "Tipo servicio": "PERSONALIZADO",
-    Tiempo: "15 dias",
-    Codigo: "",
-    Cliente: "Lucienne Freund Thurne",
-    "Cliente norm": "lucienne freund thurne",
-    DNI: "",
-    Celular: "945018132",
-    Costo: 2200,
-    Pago: 2200,
-    Debe: 0,
-    Vendedor: "",
-    "Atribuido agencia": "Si",
   },
 ];
 
@@ -335,14 +309,6 @@ for (const row of manualJuneRows) {
   if (!seen.has(key)) {
     juneRows.push(row);
     seen.add(key);
-  }
-}
-const seenSeptember = new Set(septemberRows.map(controlSaleKey));
-for (const row of manualSeptemberRows) {
-  const key = controlSaleKey(row);
-  if (!seenSeptember.has(key)) {
-    septemberRows.push(row);
-    seenSeptember.add(key);
   }
 }
 const ventas = [...baseRows, ...juneRows, ...julyRows, ...augustRows, ...septemberRows].sort((a, b) =>

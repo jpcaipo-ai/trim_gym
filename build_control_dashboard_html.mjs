@@ -838,7 +838,7 @@ const html = `<!doctype html>
       </div>
       <div class="summary-chip">
         <b>Venta septiembre 3 sedes</b>
-        <strong>S/ 276,308</strong>
+        <strong>S/ 289,498</strong>
         <span>corte 30/09/2026</span>
       </div>
       <div class="summary-chip">
