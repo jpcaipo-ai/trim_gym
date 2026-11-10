@@ -168,6 +168,26 @@
       line-height: 1;
     }
     .summary-chip span { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; }
+    .october-case { margin-bottom: 14px; }
+    .october-case .panel-title { align-items: center; margin-bottom: 16px; }
+    .case-tag { color: #9a3e36; background: #fff1ed; border: 1px solid #f0c9c1; border-radius: 999px; padding: 5px 9px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .case-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
+    .case-funnel { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: stretch; }
+    .case-stage { border-left: 3px solid #d8dedb; padding: 8px 10px; background: #f8faf8; min-width: 0; }
+    .case-stage:last-child { border-left-color: var(--red); }
+    .case-stage span, .case-stage small { display: block; color: var(--muted); font-size: 11px; line-height: 1.25; }
+    .case-stage strong { display: block; font-size: 23px; margin: 5px 0 3px; }
+    .case-revenue { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-top: 13px; padding: 12px 14px; background: #f1f7f2; border-radius: 7px; }
+    .case-revenue span { display: block; color: var(--muted); font-size: 12px; }
+    .case-revenue strong { font-size: 23px; white-space: nowrap; }
+    .case-revenue .case-roas { text-align: right; }
+    .case-models { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .case-model { border: 1px solid var(--line); border-radius: 7px; padding: 12px; background: #fffaf3; }
+    .case-model.fixed { border-color: #e7b5aa; background: #fff6f2; }
+    .case-model b { display: block; color: var(--muted); font-size: 11px; margin-bottom: 7px; }
+    .case-model strong { display: block; font-size: 24px; }
+    .case-model span { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .case-footnote { color: var(--muted); font-size: 11px; line-height: 1.4; margin: 11px 0 0; }
     .hero {
       display: grid;
       grid-template-columns: 1.2fr .8fr;
@@ -779,6 +799,7 @@
       .kpi-grid { grid-template-columns: repeat(2, minmax(130px, 1fr)); }
       .flow-card { grid-template-columns: 1fr 1fr; }
       .efficiency-panel { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
+      .case-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
       header, main { padding-left: 14px; padding-right: 14px; }
@@ -787,6 +808,10 @@
       .filters, .kpi-grid, .pipeline { grid-template-columns: 1fr; }
       .impact-summary { grid-template-columns: 1fr; }
       .efficiency-panel { grid-template-columns: 1fr; }
+      .case-funnel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .case-models { grid-template-columns: 1fr; }
+      .case-revenue { align-items: start; flex-direction: column; }
+      .case-revenue .case-roas { text-align: left; }
       .counterfactual-card { grid-template-columns: 1fr; }
       .flow-card { grid-template-columns: 1fr; }
       h1 { font-size: 21px; }
@@ -835,6 +860,34 @@
         <b>Cierres octubre</b>
         <strong>17</strong>
         <span>captación Llama Leads</span>
+      </div>
+    </section>
+    <section class="panel october-case">
+      <div class="panel-title">
+        <div><h2>Mendiburu · Octubre 2026</h2><span class="hint">Resultado comercial del CRM y comparativo de asignación del servicio</span></div>
+        <span class="case-tag">3 cierres · 17,60% participación</span>
+      </div>
+      <div class="case-layout">
+        <div>
+          <div class="case-funnel" aria-label="Embudo de octubre de Mendiburu">
+            <div class="case-stage"><span>Nuevos leads</span><strong>281</strong><small>100% · S/ 5,56 por lead</small></div>
+            <div class="case-stage"><span>Formularios</span><strong>219</strong><small>77,94% de leads</small></div>
+            <div class="case-stage"><span>Citas agendadas</span><strong>40</strong><small>18,26% de formularios</small></div>
+            <div class="case-stage"><span>Citas asistidas</span><strong>30</strong><small>75% de citas</small></div>
+            <div class="case-stage"><span>Cierres</span><strong>3</strong><small>10% de asistidas · CAC pauta S/ 520,89</small></div>
+          </div>
+          <div class="case-revenue">
+            <div><span>Front-end revenue · ventas iniciales reportadas</span><strong>S/ 8.284</strong></div>
+            <div class="case-roas"><span>ROAS de pauta</span><strong>5,30x</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="case-models">
+            <div class="case-model"><b>Modelo anterior · según participación</b><strong>US$ 264,06</strong><span>17,60% del servicio total de US$ 1.500.</span></div>
+            <div class="case-model fixed"><b>Modelo desde octubre · tarifa por sede</b><strong>US$ 500</strong><span>Un tercio del servicio total; diferencia para Mendiburu: +US$ 235,94.</span></div>
+          </div>
+          <p class="case-footnote">La pauta reportada es S/ 1.562,70. ROAS y CAC se mantienen iguales bajo ambos modelos; solo cambia cómo se asigna el honorario del servicio. El CRM no desglosa aquí No-show ni citas no agendadas. Servicio expresado en USD, sin IGV; el modelo anterior es una referencia calculada con la participación informada.</p>
+        </div>
       </div>
     </section>
     <section class="hero">
